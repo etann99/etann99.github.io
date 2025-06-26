@@ -52,6 +52,9 @@
             padding: 0.5rem; 
             border-radius: 0.25rem; 
         }
+        #article-text {
+            white-space: pre-wrap;
+        }
     </style>
 </head>
 <body>
@@ -78,7 +81,7 @@
             <h2 class="text-2xl font-semibold mb-2" id="article-title">Loading...</h2>
             <p class="text-gray-500 text-sm mb-4" id="article-date">Loading...</p>
             <p id="article-text">Loading...</p>
-            <p class="text-sm text-gray-600" id="article-tags">Tags: None</p>
+            <p class="text-sm text-gray-600" id="article-tags" data-lang-mg="Tenifototra" data-lang-fr="Étiquettes" data-lang-en="Tags">Tenifototra: Tsia</p>
             <div class="mt-2">
                 <a id="share-x" href="#" class="text-sm text-blue-600 hover:underline">Share on X</a> |
                 <a id="share-email" href="#" class="text-sm text-blue-600 hover:underline">Share via Email</a>
@@ -105,7 +108,7 @@
             const articles = JSON.parse(localStorage.getItem('articles') || '[]');
             const article = articles.find(a => a.id === id);
             if (article) {
-                document.getElementById('article-tags').textContent = `Tags: ${article.tags.map(tag => tag[lang]).join(', ') || 'None'}`;
+                document.getElementById('article-tags').textContent = `${document.getElementById('article-tags').getAttribute(`data-lang-${lang}`)}: ${article.tags.join(', ') || 'Tsia'}`;
             }
         }
 
@@ -126,7 +129,7 @@
                 document.getElementById('article-title').textContent = article.title;
                 document.getElementById('article-date').textContent = new Date(article.date).toLocaleDateString('mg-MG');
                 document.getElementById('article-text').textContent = article.content;
-                document.getElementById('article-tags').textContent = `Tags: ${article.tags.map(tag => tag[savedLang]).join(', ') || 'None'}`;
+                document.getElementById('article-tags').textContent = `${document.getElementById('article-tags').getAttribute(`data-lang-${savedLang}`)}: ${article.tags.join(', ') || 'Tsia'}`;
                 document.getElementById('share-x').href = `https://twitter.com/intent/tweet?url=https://Etann99.github.io/article.html?id=${article.id}&text=${encodeURIComponent(article.title)}`;
                 document.getElementById('share-email').href = `mailto:?subject=${encodeURIComponent(article.title)}&body=Check out this article: https://Etann99.github.io/article.html?id=${article.id}`;
                 document.title = `${article.title} - Rediredin'i Nantenaina`;
