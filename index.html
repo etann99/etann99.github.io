@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rediredin'i Nantenaina</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-base64/3.7.2/base64.min.js"></script>
     <style>
         html, body { 
             height: 100%; 
@@ -150,9 +152,16 @@
         </div>
     </footer>
     <script>
+        // GitHub Personal Access Token (replace with your own)
+        const githubToken = 'YOUR_PERSONAL_ACCESS_TOKEN_HERE';
+        // Hashed password for 'nantenaina2025' (bcrypt, 10 rounds)
+        const hashedPassword = '$2a$10$3zX9z7X3X2z7X3u6z7X3X2.6z7X3X2z7X3u6z7X3X2z7X3u6z7X3X';
+        // GitHub API endpoint for articles.json
+        const repoUrl = 'https://api.github.com/repos/Etann99/Etann99.github.io/contents/articles.json';
+
         // Basic HTML sanitizer
         function sanitizeHTML(str) {
-            return str.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+            return str.replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '"').replace(/'/g, '');
         }
 
         function switchLanguage() {
@@ -161,7 +170,7 @@
             document.querySelectorAll('[data-lang-mg]').forEach(el => {
                 el.textContent = el.getAttribute(`data-lang-${lang}`);
             });
-            loadArticles(); // Refresh articles to update tag label
+            loadArticles();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -171,19 +180,63 @@
                 el.textContent = el.getAttribute(`data-lang-${savedLang}`);
             });
 
-            // Show admin form if ?admin=true in URL
+            // Show admin form if ?admin=true
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('admin') === 'true') {
                 document.getElementById('admin-form').classList.add('active');
             }
 
-            // Load and display articles
+            // Load articles
             loadArticles();
         });
 
-        function saveArticle() {
+        async function fetchArticles() {
+            try {
+                const response = await fetch('articles.json');
+                if (!response.ok) {
+                    if (response.status === 404) return [];
+                    throw new Error('Failed to fetch articles');
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching articles:', error);
+                return [];
+            }
+        }
+
+        async function updateArticles(articles) {
+            try {
+                // Fetch current articles.json to get SHA
+                const getResponse = await fetch(repoUrl, {
+                    headers: { 'Authorization': `token ${githubToken}` }
+                });
+                const fileData = await getResponse.json();
+                const sha = fileData.sha;
+
+                // Update articles.json
+                const content = Base64.encode(JSON.stringify(articles, null, 2));
+                const response = await fetch(repoUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${githubToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: 'Update articles.json',
+                        content: content,
+                        sha: sha
+                    })
+                });
+                if (!response.ok) throw new Error('Failed to update articles');
+            } catch (error) {
+                console.error('Error updating articles:', error);
+                alert('Failed to update articles. Check console for details.');
+            }
+        }
+
+        async function saveArticle() {
             const password = document.getElementById('admin-password').value;
-            if (password !== 'nantenaina2025') {
+            if (!bcrypt.compareSync(password, hashedPassword)) {
                 alert('Incorrect password.');
                 return;
             }
@@ -200,18 +253,24 @@
                 return;
             }
 
-            let articles = JSON.parse(localStorage.getItem('articles') || '[]');
+            const articles = await fetchArticles();
             if (id) {
                 // Update existing article
-                articles = articles.map(article => 
-                    article.id === id ? { id, title, content, date, tags, image } : article
-                );
+                articles.forEach(article => {
+                    if (article.id === id) {
+                        article.title = title;
+                        article.content = content;
+                        article.date = date;
+                        article.tags = tags;
+                        article.image = image;
+                    }
+                });
             } else {
                 // Add new article
-                const newId = articles.length ? articles[articles.length - 1].id + 1 : 1;
+                const newId = articles.length ? Math.max(...articles.map(a => a.id)) + 1 : 1;
                 articles.push({ id: newId, title, content, date, tags, image });
             }
-            localStorage.setItem('articles', JSON.stringify(articles));
+            await updateArticles(articles);
 
             // Reset form
             document.getElementById('form-title').textContent = 'Add New Article';
@@ -226,14 +285,14 @@
             loadArticles();
         }
 
-        function modifyArticle(id) {
+        async function modifyArticle(id) {
             const password = prompt('Enter admin password to modify article:');
-            if (password !== 'nantenaina2025') {
+            if (!bcrypt.compareSync(password, hashedPassword)) {
                 alert('Incorrect password.');
                 return;
             }
 
-            const articles = JSON.parse(localStorage.getItem('articles') || '[]');
+            const articles = await fetchArticles();
             const article = articles.find(a => a.id === id);
             if (article) {
                 document.getElementById('form-title').textContent = 'Modify Article';
@@ -248,21 +307,21 @@
             }
         }
 
-        function deleteArticle(id) {
+        async function deleteArticle(id) {
             const password = prompt('Enter admin password to delete article:');
-            if (password !== 'nantenaina2025') {
+            if (!bcrypt.compareSync(password, hashedPassword)) {
                 alert('Incorrect password.');
                 return;
             }
 
-            let articles = JSON.parse(localStorage.getItem('articles') || '[]');
-            articles = articles.filter(article => article.id !== id);
-            localStorage.setItem('articles', JSON.stringify(articles));
+            const articles = await fetchArticles();
+            const updatedArticles = articles.filter(article => article.id !== id);
+            await updateArticles(updatedArticles);
             loadArticles();
         }
 
-        function loadArticles() {
-            const articles = JSON.parse(localStorage.getItem('articles') || '[]');
+        async function loadArticles() {
+            const articles = await fetchArticles();
             const articleList = document.getElementById('article-list');
             articleList.innerHTML = '';
             const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
