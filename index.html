@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rediredin'i Nantenaina</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
     <style>
         html, body { 
             height: 100%; 
@@ -161,13 +160,13 @@
         </div>
     </footer>
     <script>
-        // Hashed password for 'nantenaina2025' (bcrypt, 10 rounds)
-        const hashedPassword = '$2a$10$3zX9z7X3X2z7X3u6z7X3X2.6z7X3X2z7X3u6z7X3X2z7X3u6z7X3X';
+        // Plain password for admin actions
+        const adminPassword = 'nantenaina2025';
 
         // Basic HTML sanitizer
         function sanitizeHTML(str) {
             if (typeof str !== 'string') return '';
-            return str.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+            return str.replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '"').replace(/'/g, '');
         }
 
         function switchLanguage() {
@@ -239,7 +238,7 @@
                 alert('Downloaded articles.json. Upload it to your GitHub repository (Etann99/Etann99.github.io) at articles.json to make changes visible to all.');
             } catch (error) {
                 console.error('Error exporting articles:', error);
-                alert('Failed to export articles. Check console for details.');
+                alert(`Failed to export articles: ${error.message}. Check console for details.`);
             }
         }
 
@@ -262,7 +261,7 @@
                     alert('Please enter a password.');
                     return;
                 }
-                if (!bcrypt.compareSync(password, hashedPassword)) {
+                if (password !== adminPassword) {
                     alert('Incorrect password.');
                     return;
                 }
@@ -288,7 +287,6 @@
                 }
 
                 if (id) {
-                    // Update existing article
                     const articleIndex = articles.findIndex(article => article.id === id);
                     if (articleIndex === -1) {
                         alert('Article to modify not found in local storage.');
@@ -296,7 +294,6 @@
                     }
                     articles[articleIndex] = { id, title, content, date, tags, image };
                 } else {
-                    // Add new article
                     const newId = articles.length ? Math.max(...articles.map(a => a.id)) + 1 : 1;
                     articles.push({ id: newId, title, content, date, tags, image });
                 }
@@ -309,7 +306,6 @@
                     return;
                 }
 
-                // Reset form
                 document.getElementById('form-title').textContent = 'Add New Article';
                 editIdInput.value = '';
                 passwordInput.value = '';
@@ -334,7 +330,7 @@
                     alert('Please enter a password.');
                     return;
                 }
-                if (!bcrypt.compareSync(password, hashedPassword)) {
+                if (password !== adminPassword) {
                     alert('Incorrect password.');
                     return;
                 }
@@ -371,7 +367,7 @@
                 titleInput.value = article.title;
                 contentInput.value = article.content;
                 dateInput.value = article.date;
-                tagsInput.value = article.tags.join(', ');
+                tagsInput.value = article.Tags.join(', ');
                 imageInput.value = article.image;
                 adminForm.classList.add('active');
                 window.scrollTo(0, adminForm.offsetTop);
@@ -389,7 +385,7 @@
                     alert('Please enter a password.');
                     return;
                 }
-                if (!bcrypt.compareSync(password, hashedPassword)) {
+                if (password !== adminPassword) {
                     alert('Incorrect password.');
                     return;
                 }
@@ -444,7 +440,6 @@
                 const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
                 const lang = document.getElementById('lang-switcher')?.value || 'mg';
 
-                // Use localArticles for admin, articles.json for visitors
                 const displayArticles = isAdmin ? localArticles : articles;
 
                 displayArticles.forEach(article => {
