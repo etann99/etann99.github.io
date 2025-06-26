@@ -90,7 +90,8 @@
             const lang = document.getElementById('lang-switcher').value;
             localStorage.setItem('selectedLanguage', lang);
             document.querySelectorAll('[data-lang-mg]').forEach(el => {
-                el.textContent = el.getAttribute(`data-lang-${lang}`);
+                const text = el.getAttribute(`data-lang-${lang}`);
+                if (text) el.textContent = text;
             });
         }
 
@@ -98,7 +99,8 @@
             const savedLang = localStorage.getItem('selectedLanguage') || 'mg';
             document.getElementById('lang-switcher').value = savedLang;
             document.querySelectorAll('[data-lang-mg]').forEach(el => {
-                el.textContent = el.getAttribute(`data-lang-${savedLang}`);
+                const text = el.getAttribute(`data-lang-${savedLang}`);
+                if (text) el.textContent = text;
             });
         });
     </script>
