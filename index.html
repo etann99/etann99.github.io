@@ -132,7 +132,7 @@
                 <input type="hidden" id="edit-id">
                 <input type="password" id="admin-password" placeholder="Admin Password" required>
                 <input type="text" id="article-title" placeholder="Article Title" required>
-                <textarea id="article-content" placeholder="Article Content" rows="5" required></textarea>
+                <textarea id="article-content" placeholder="Article Content (use newlines for paragraphs)" rows="5" required></textarea>
                 <input type="date" id="article-date" required>
                 <input type="text" id="article-tags" placeholder="Tags (e.g., Fitiavana, Kolontsaina)">
                 <input type="url" id="article-image" placeholder="Image URL">
@@ -150,6 +150,11 @@
         </div>
     </footer>
     <script>
+        // Basic HTML sanitizer
+        function sanitizeHTML(str) {
+            return str.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
         function switchLanguage() {
             const lang = document.getElementById('lang-switcher').value;
             localStorage.setItem('selectedLanguage', lang);
@@ -184,10 +189,10 @@
             }
 
             const id = document.getElementById('edit-id').value ? parseInt(document.getElementById('edit-id').value) : null;
-            const title = document.getElementById('article-title').value;
+            const title = sanitizeHTML(document.getElementById('article-title').value);
             const content = document.getElementById('article-content').value;
             const date = document.getElementById('article-date').value;
-            const tags = document.getElementById('article-tags').value.split(',').map(tag => tag.trim()).filter(tag => tag);
+            const tags = document.getElementById('article-tags').value.split(',').map(tag => sanitizeHTML(tag.trim())).filter(tag => tag);
             const image = document.getElementById('article-image').value || 'https://mta.mg/wp-content/uploads/2021/05/Sunset-baobabs-Madagascar-mta-1.jpg';
 
             if (!title || !content || !date) {
@@ -266,21 +271,21 @@
             articles.forEach(article => {
                 const articleDiv = document.createElement('div');
                 articleDiv.className = 'bg-white p-6 rounded-lg shadow-md article-card';
-                const excerpt = article.content.substring(0, 100).replace(/\n/g, '<br>');
+                const excerpt = article.content.substring(0, 100).replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
                 articleDiv.innerHTML = `
                     <img src="${article.image}" alt="Article image" class="w-full mb-4 rounded">
                     <h3 class="text-xl font-bold"><a href="article.html?id=${article.id}" class="hover:underline">${article.title}</a></h3>
                     <p class="text-gray-500 text-sm">${new Date(article.date).toLocaleDateString('mg-MG')}</p>
-                    <p class="mt-2">${excerpt}${article.content.length > 100 ? '...' : ''}</p>
-                    <p class="text-sm text-gray-600" data-lang-mg="Tenifototra" data-lang-fr="Étiquettes" data-lang-en="Tags">Tenifototra: ${article.tags.join(', ') || 'Tsia'}</p>
+                    <div class="mt-2" style="white-space: pre-wrap;"><p>${excerpt}${article.content.length > 100 ? '...' : ''}</p></div>
+                    <p class="text-sm text-gray-600" data-lang-mg="Tenifototra" data-lang-fr="Étiquettes" data-lang-en="Tags">${lang === 'mg' ? 'Tenifototra' : lang === 'fr' ? 'Étiquettes' : 'Tags'}: ${article.tags.join(', ') || 'Tsia'}</p>
                     <div class="mt-2">
                         <a href="https://twitter.com/intent/tweet?url=https://Etann99.github.io/article.html?id=${article.id}&text=${encodeURIComponent(article.title)}" class="text-sm text-blue-600 hover:underline">Share on X</a> |
                         <a href="mailto:?subject=${encodeURIComponent(article.title)}&body=Check out this article: https://Etann99.github.io/article.html?id=${article.id}" class="text-sm text-blue-600 hover:underline">Share via Email</a>
                     </div>
                     <a href="article.html?id=${article.id}" class="hover:underline">Hamaky Bebe Kokoa</a>
                     ${isAdmin ? `
-                        <div class="mt-2">
-                            <button class="modify-btn mr-2" onclick="modifyArticle(${article.id})">Modify</button>
+                        <div class="mt-2 space-x-2">
+                            <button class="modify-btn" onclick="modifyArticle(${article.id})">Modify</button>
                             <button class="delete-btn" onclick="deleteArticle(${article.id})">Delete</button>
                         </div>
                     ` : ''}
