@@ -198,7 +198,7 @@
                     if (adminForm) adminForm.classList.add('active');
                 }
 
-                // Load articles
+                // Load articles and sync localStorage in admin mode
                 loadArticles();
             } catch (error) {
                 console.error('Error initializing page:', error);
@@ -427,7 +427,8 @@
         async function loadArticles() {
             try {
                 console.log('loadArticles called');
-                const articles = await fetchArticles();
+                const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
+                let articles = await fetchArticles();
                 let localArticles;
                 try {
                     localArticles = JSON.parse(localStorage.getItem('articles') || '[]');
@@ -436,15 +437,32 @@
                     localArticles = [];
                 }
 
+                // Sync localStorage with articles.json in admin mode
+                if (isAdmin && localArticles.length === 0 && articles.length > 0) {
+                    console.log('Syncing localStorage with articles.json');
+                    try {
+                        localStorage.setItem('articles', JSON.stringify(articles));
+                        localArticles = articles;
+                        alert('Local articles were empty. Synced with articles.json. Export after changes to update GitHub.');
+                    } catch (e) {
+                        console.error('Error syncing localStorage:', e);
+                        alert('Failed to sync local storage with articles.json. Check console for details.');
+                    }
+                }
+
                 const articleList = document.getElementById('article-list');
                 if (!articleList) {
                     throw new Error('Article list element not found.');
                 }
                 articleList.innerHTML = '';
-                const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
                 const lang = document.getElementById('lang-switcher')?.value || 'mg';
 
                 const displayArticles = isAdmin ? localArticles : articles;
+
+                if (isAdmin && displayArticles.length === 0) {
+                    console.warn('No articles in localStorage for admin view');
+                    alert('No articles found in local storage. Add new articles or ensure articles.json is uploaded to GitHub.');
+                }
 
                 displayArticles.forEach(article => {
                     const articleDiv = document.createElement('div');
