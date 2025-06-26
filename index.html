@@ -153,7 +153,7 @@
     </footer>
     <script>
         // GitHub Personal Access Token (replace with your own)
-        const githubToken = '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';
+        const githubToken = 'YOUR_PERSONAL_ACCESS_TOKEN_HERE';
         // Hashed password for 'nantenaina2025' (bcrypt, 10 rounds)
         const hashedPassword = '$2a$10$3zX9z7X3X2z7X3u6z7X3X2.6z7X3X2z7X3u6z7X3X2z7X3u6z7X3X';
         // GitHub API endpoint for articles.json
@@ -194,24 +194,48 @@
             try {
                 const response = await fetch('articles.json');
                 if (!response.ok) {
-                    if (response.status === 404) return [];
-                    throw new Error('Failed to fetch articles');
+                    if (response.status === 404) {
+                        console.warn('articles.json not found, returning empty array');
+                        return [];
+                    }
+                    throw new Error(`Failed to fetch articles: ${response.statusText}`);
                 }
                 return await response.json();
             } catch (error) {
                 console.error('Error fetching articles:', error);
+                alert('Failed to load articles. Check console for details.');
                 return [];
             }
         }
 
         async function updateArticles(articles) {
+            if (!githubToken || githubToken === 'YOUR_PERSONAL_ACCESS_TOKEN_HERE') {
+                alert('GitHub Personal Access Token is missing or invalid. Please update it in the code.');
+                return false;
+            }
             try {
                 // Fetch current articles.json to get SHA
-                const getResponse = await fetch(repoUrl, {
-                    headers: { 'Authorization': `token ${githubToken}` }
-                });
-                const fileData = await getResponse.json();
-                const sha = fileData.sha;
+                let sha;
+                try {
+                    const getResponse = await fetch(repoUrl, {
+                        headers: { 'Authorization': `token ${githubToken}` }
+                    });
+                    if (getResponse.status === 404) {
+                        // File doesn't exist, create new
+                        sha = null;
+                    } else if (!getResponse.ok) {
+                        throw new Error(`Failed to fetch articles.json: ${getResponse.statusText}`);
+                    } else {
+                        const fileData = await getResponse.json();
+                        sha = fileData.sha;
+                    }
+                } catch (error) {
+                    if (error.message.includes('404')) {
+                        sha = null;
+                    } else {
+                        throw error;
+                    }
+                }
 
                 // Update articles.json
                 const content = Base64.encode(JSON.stringify(articles, null, 2));
@@ -222,20 +246,29 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        message: 'Update articles.json',
+                        message: `Update articles.json at ${new Date().toISOString()}`,
                         content: content,
-                        sha: sha
+                        sha: sha || undefined
                     })
                 });
-                if (!response.ok) throw new Error('Failed to update articles');
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`Failed to update articles: ${errorData.message || response.statusText}`);
+                }
+                return true;
             } catch (error) {
                 console.error('Error updating articles:', error);
-                alert('Failed to update articles. Check console for details.');
+                alert(`Failed to update articles: ${error.message}. Check console for details.`);
+                return false;
             }
         }
 
         async function saveArticle() {
             const password = document.getElementById('admin-password').value;
+            if (!password) {
+                alert('Please enter a password.');
+                return;
+            }
             if (!bcrypt.compareSync(password, hashedPassword)) {
                 alert('Incorrect password.');
                 return;
@@ -270,23 +303,27 @@
                 const newId = articles.length ? Math.max(...articles.map(a => a.id)) + 1 : 1;
                 articles.push({ id: newId, title, content, date, tags, image });
             }
-            await updateArticles(articles);
-
-            // Reset form
-            document.getElementById('form-title').textContent = 'Add New Article';
-            document.getElementById('edit-id').value = '';
-            document.getElementById('admin-password').value = '';
-            document.getElementById('article-title').value = '';
-            document.getElementById('article-content').value = '';
-            document.getElementById('article-date').value = '';
-            document.getElementById('article-tags').value = '';
-            document.getElementById('article-image').value = '';
-
-            loadArticles();
+            const success = await updateArticles(articles);
+            if (success) {
+                // Reset form
+                document.getElementById('form-title').textContent = 'Add New Article';
+                document.getElementById('edit-id').value = '';
+                document.getElementById('admin-password').value = '';
+                document.getElementById('article-title').value = '';
+                document.getElementById('article-content').value = '';
+                document.getElementById('article-date').value = '';
+                document.getElementById('article-tags').value = '';
+                document.getElementById('article-image').value = '';
+                loadArticles();
+            }
         }
 
         async function modifyArticle(id) {
             const password = prompt('Enter admin password to modify article:');
+            if (!password) {
+                alert('Please enter a password.');
+                return;
+            }
             if (!bcrypt.compareSync(password, hashedPassword)) {
                 alert('Incorrect password.');
                 return;
@@ -309,6 +346,10 @@
 
         async function deleteArticle(id) {
             const password = prompt('Enter admin password to delete article:');
+            if (!password) {
+                alert('Please enter a password.');
+                return;
+            }
             if (!bcrypt.compareSync(password, hashedPassword)) {
                 alert('Incorrect password.');
                 return;
@@ -316,8 +357,10 @@
 
             const articles = await fetchArticles();
             const updatedArticles = articles.filter(article => article.id !== id);
-            await updateArticles(updatedArticles);
-            loadArticles();
+            const success = await updateArticles(updatedArticles);
+            if (success) {
+                loadArticles();
+            }
         }
 
         async function loadArticles() {
