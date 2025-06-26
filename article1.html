@@ -1,0 +1,110 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="mg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fahendrena Malagasy - Rediredin'i Nantenaina</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: rgba(230, 243, 230, 0.9) url('https://images.unsplash.com/photo-1620228882913-0e4c5f24f8dd') no-repeat center center fixed; 
+            background-size: cover; 
+            color: #1A1A1A; 
+        }
+        article { font-family: 'Georgia', serif; line-height: 1.8; max-width: 800px; margin: auto; }
+        header { background-color: #5C2F2F; color: white; position: sticky; top: 0; z-index: 10; }
+        footer { background-color: #4A2C2A; color: white; }
+        a { color: #5C2F2F; transition: color 0.3s; }
+        a:hover { color: #D4A017; }
+        select { background: #5C2F2F; color: white; padding: 0.5rem; border-radius: 0.25rem; }
+    </style>
+</head>
+<body>
+    <header class="shadow-md">
+        <div class="container mx-auto px-4 py-6">
+            <h1 class="text-4xl font-bold font-['Raleway', sans-serif]" data-lang-mg="Rediredin'i Nantenaina" data-lang-fr="Réflexions de Nantenaina" data-lang-en="Nantenaina's Reflections">Rediredin'i Nantenaina</h1>
+            <p class="text-lg" data-lang-mg="Eritreritra sendra nandalo, dia nantsoina mba hitafa, dia noraketina an-tsoratra." data-lang-fr="Pensées passantes, appelées à dialoguer, puis écrites." data-lang-en="Passing thoughts, called to converse, then written down.">Eritreritra sendra nandalo, dia nantsoina mba hitafa, dia noraketina an-tsoratra.</p>
+            <nav class="mt-4 flex justify-between">
+                <ul class="flex space-x-4">
+                    <li><a href="index.html" class="hover:underline" data-lang-mg="Fandraisana" data-lang-fr="Accueil" data-lang-en="Home">Fandraisana</a></li>
+                    <li><a href="about.html" class="hover:underline" data-lang-mg="Momba Ahy" data-lang-fr="À propos" data-lang-en="About">Momba Ahy</a></li>
+                    <li><a href="contact.html" class="hover:underline" data-lang-mg="Hifandray" data-lang-fr="Contact" data-lang-en="Contact">Hifandray</a></li>
+                </ul>
+                <select id="lang-switcher" onchange="switchLanguage()">
+                    <option value="mg">Malagasy</option>
+                    <option value="fr">Français</option>
+                    <option value="en">English</option>
+                </select>
+            </nav>
+        </div>
+    </header>
+    <main class="container mx-auto px-4 py-8">
+        <article>
+            <h2 class="text-2xl font-semibold mb-2">Fahendrena Malagasy: Ny Lovan’ny Tany sy ny Olona</h2>
+            <p class="text-gray-500 text-sm mb-4">26 Jona 2025 • 5 min read</p>
+            <p>Ny fahendrena Malagasy dia toy ny hazo fahendrena mitombo eo amin’ny tany masina. Avy amin’ny ohabolana sy ny tantara an-davany, dia mampianatra antsika ny firaisankina, ny fanajana ny tontolo iainana, ary ny fahatsiarovan-tena.</p>
+            <p>Ohatra, ny ohabolana “Ny fanahy no maha olona” dia mampahatsiahy antsika fa ny soatoavina ao am-po no mamaritra ny maha-izy antsika. Ato amin’ity lahatsoratra ity, dia handinika ny fomba ahafahan’ny fahendrena Malagasy manampy antsika hiatrika ny fiovana amin’ny tontolo maoderina sady mitazona ny lova.</p>
+            <p class="text-sm text-gray-600">Tags: Teny Malagasy, Kolontsaina Malagasy, Filosofia</p>
+            <div class="mt-2">
+                <a href="https://twitter.com/intent/tweet?url=https://yourusername.github.io/article1.html&text=Fahendrena Malagasy" class="text-sm text-blue-600 hover:underline">Share on X</a> |
+                <a href="mailto:?subject=Fahendrena Malagasy&body=Check out this article: https://yourusername.github.io/article1.html" class="text-sm text-blue-600 hover:underline">Share via Email</a>
+            </div>
+            <a href="index.html" class="hover:underline">Hiverina amin’ny Fandraisana</a>
+        </article>
+    </main>
+    <footer class="py-6">
+        <div class="container mx-auto px-4">
+            <p data-lang-mg="© 2025 Nantenaina Ratsimbazafy. Zo rehetra voatokana." data-lang-fr="© 2025 Nantenaina Ratsimbazafy. Tous droits réservés." data-lang-en="© 2025 Nantenaina Ratsimbazafy. All rights reserved.">© 2025 Nantenaina Ratsimbazafy. Zo rehetra voatokana.</p>
+            <p data-lang-mg="Hifandraisa:" data-lang-fr="Contactez-moi :" data-lang-en="Connect:">Hifandraisa: <a href="mailto:elnantenaina99@gmail.com" class="hover:underline">elnantenaina99@gmail.com</a></p>
+        </div>
+    </footer>
+    <script>
+        function switchLanguage() {
+            const lang = document.getElementById('lang-switcher').value;
+            document.querySelectorAll('[data-lang-mg]').forEach(el => {
+                el.textContent = el.getAttribute(`data-lang-${lang}`);
+            });
+        }
+    </script>
+</body>
+</html>
