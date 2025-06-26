@@ -77,6 +77,9 @@
             width: 100%; 
             margin-bottom: 1rem; 
         }
+        textarea {
+            white-space: pre-wrap;
+        }
         button { 
             background-color: #5C2F2F; 
             color: white; 
@@ -92,6 +95,12 @@
         }
         .delete-btn:hover { 
             background-color: #8B0000; 
+        }
+        .modify-btn { 
+            background-color: #FFA500; 
+        }
+        .modify-btn:hover { 
+            background-color: #FF8C00; 
         }
     </style>
 </head>
@@ -119,19 +128,15 @@
             <p class="proverb mb-4">"Ny fanahy no maha olona" – Ohabolana Malagasy</p>
             <h2 class="text-2xl font-semibold mb-4" data-lang-mg="Lahatsoratra Rehetra" data-lang-fr="Tous les articles" data-lang-en="All Articles">Lahatsoratra Rehetra</h2>
             <div id="admin-form" class="bg-white p-6 rounded-lg shadow-md mb-6">
-                <h3 class="text-xl font-bold mb-4">Add New Article</h3>
+                <h3 class="text-xl font-bold mb-4" id="form-title">Add New Article</h3>
+                <input type="hidden" id="edit-id">
                 <input type="password" id="admin-password" placeholder="Admin Password" required>
                 <input type="text" id="article-title" placeholder="Article Title" required>
                 <textarea id="article-content" placeholder="Article Content" rows="5" required></textarea>
                 <input type="date" id="article-date" required>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium">Tags (comma-separated)</label>
-                    <input type="text" id="tags-mg" placeholder="Malagasy Tags (e.g., Fitiavana, Kolontsaina)" class="mb-2">
-                    <input type="text" id="tags-fr" placeholder="French Tags (e.g., Amour, Culture)">
-                    <input type="text" id="tags-en" placeholder="English Tags (e.g., Love, Culture)">
-                </div>
+                <input type="text" id="article-tags" placeholder="Tags (e.g., Fitiavana, Kolontsaina)">
                 <input type="url" id="article-image" placeholder="Image URL">
-                <button onclick="addArticle()">Submit Article</button>
+                <button onclick="saveArticle()">Submit Article</button>
             </div>
             <div id="article-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Articles will be dynamically inserted here -->
@@ -151,7 +156,7 @@
             document.querySelectorAll('[data-lang-mg]').forEach(el => {
                 el.textContent = el.getAttribute(`data-lang-${lang}`);
             });
-            loadArticles(); // Refresh articles to update tag language
+            loadArticles(); // Refresh articles to update tag label
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -171,19 +176,18 @@
             loadArticles();
         });
 
-        function addArticle() {
+        function saveArticle() {
             const password = document.getElementById('admin-password').value;
             if (password !== 'nantenaina2025') {
                 alert('Incorrect password.');
                 return;
             }
 
+            const id = document.getElementById('edit-id').value ? parseInt(document.getElementById('edit-id').value) : null;
             const title = document.getElementById('article-title').value;
             const content = document.getElementById('article-content').value;
             const date = document.getElementById('article-date').value;
-            const tagsMg = document.getElementById('tags-mg').value.split(',').map(tag => tag.trim()).filter(tag => tag);
-            const tagsFr = document.getElementById('tags-fr').value.split(',').map(tag => tag.trim()).filter(tag => tag);
-            const tagsEn = document.getElementById('tags-en').value.split(',').map(tag => tag.trim()).filter(tag => tag);
+            const tags = document.getElementById('article-tags').value.split(',').map(tag => tag.trim()).filter(tag => tag);
             const image = document.getElementById('article-image').value || 'https://mta.mg/wp-content/uploads/2021/05/Sunset-baobabs-Madagascar-mta-1.jpg';
 
             if (!title || !content || !date) {
@@ -191,32 +195,52 @@
                 return;
             }
 
-            // Ensure tags are aligned across languages
-            const maxLength = Math.max(tagsMg.length, tagsFr.length, tagsEn.length);
-            const tags = [];
-            for (let i = 0; i < maxLength; i++) {
-                tags.push({
-                    mg: tagsMg[i] || tagsMg[0] || 'None',
-                    fr: tagsFr[i] || tagsFr[0] || 'Aucun',
-                    en: tagsEn[i] || tagsEn[0] || 'None'
-                });
+            let articles = JSON.parse(localStorage.getItem('articles') || '[]');
+            if (id) {
+                // Update existing article
+                articles = articles.map(article => 
+                    article.id === id ? { id, title, content, date, tags, image } : article
+                );
+            } else {
+                // Add new article
+                const newId = articles.length ? articles[articles.length - 1].id + 1 : 1;
+                articles.push({ id: newId, title, content, date, tags, image });
             }
-
-            const articles = JSON.parse(localStorage.getItem('articles') || '[]');
-            const id = articles.length ? articles[articles.length - 1].id + 1 : 1;
-            articles.push({ id, title, content, date, tags, image });
             localStorage.setItem('articles', JSON.stringify(articles));
 
+            // Reset form
+            document.getElementById('form-title').textContent = 'Add New Article';
+            document.getElementById('edit-id').value = '';
             document.getElementById('admin-password').value = '';
             document.getElementById('article-title').value = '';
             document.getElementById('article-content').value = '';
             document.getElementById('article-date').value = '';
-            document.getElementById('tags-mg').value = '';
-            document.getElementById('tags-fr').value = '';
-            document.getElementById('tags-en').value = '';
+            document.getElementById('article-tags').value = '';
             document.getElementById('article-image').value = '';
 
             loadArticles();
+        }
+
+        function modifyArticle(id) {
+            const password = prompt('Enter admin password to modify article:');
+            if (password !== 'nantenaina2025') {
+                alert('Incorrect password.');
+                return;
+            }
+
+            const articles = JSON.parse(localStorage.getItem('articles') || '[]');
+            const article = articles.find(a => a.id === id);
+            if (article) {
+                document.getElementById('form-title').textContent = 'Modify Article';
+                document.getElementById('edit-id').value = article.id;
+                document.getElementById('article-title').value = article.title;
+                document.getElementById('article-content').value = article.content;
+                document.getElementById('article-date').value = article.date;
+                document.getElementById('article-tags').value = article.tags.join(', ');
+                document.getElementById('article-image').value = article.image;
+                document.getElementById('admin-form').classList.add('active');
+                window.scrollTo(0, document.getElementById('admin-form').offsetTop);
+            }
         }
 
         function deleteArticle(id) {
@@ -242,19 +266,24 @@
             articles.forEach(article => {
                 const articleDiv = document.createElement('div');
                 articleDiv.className = 'bg-white p-6 rounded-lg shadow-md article-card';
-                const tagsInLang = article.tags.map(tag => tag[lang]).join(', ') || 'None';
+                const excerpt = article.content.substring(0, 100).replace(/\n/g, '<br>');
                 articleDiv.innerHTML = `
                     <img src="${article.image}" alt="Article image" class="w-full mb-4 rounded">
                     <h3 class="text-xl font-bold"><a href="article.html?id=${article.id}" class="hover:underline">${article.title}</a></h3>
                     <p class="text-gray-500 text-sm">${new Date(article.date).toLocaleDateString('mg-MG')}</p>
-                    <p class="mt-2">${article.content.substring(0, 100)}...</p>
-                    <p class="text-sm text-gray-600">Tags: ${tagsInLang}</p>
+                    <p class="mt-2">${excerpt}${article.content.length > 100 ? '...' : ''}</p>
+                    <p class="text-sm text-gray-600" data-lang-mg="Tenifototra" data-lang-fr="Étiquettes" data-lang-en="Tags">Tenifototra: ${article.tags.join(', ') || 'Tsia'}</p>
                     <div class="mt-2">
                         <a href="https://twitter.com/intent/tweet?url=https://Etann99.github.io/article.html?id=${article.id}&text=${encodeURIComponent(article.title)}" class="text-sm text-blue-600 hover:underline">Share on X</a> |
                         <a href="mailto:?subject=${encodeURIComponent(article.title)}&body=Check out this article: https://Etann99.github.io/article.html?id=${article.id}" class="text-sm text-blue-600 hover:underline">Share via Email</a>
                     </div>
                     <a href="article.html?id=${article.id}" class="hover:underline">Hamaky Bebe Kokoa</a>
-                    ${isAdmin ? `<button class="delete-btn mt-2" onclick="deleteArticle(${article.id})">Delete</button>` : ''}
+                    ${isAdmin ? `
+                        <div class="mt-2">
+                            <button class="modify-btn mr-2" onclick="modifyArticle(${article.id})">Modify</button>
+                            <button class="delete-btn" onclick="deleteArticle(${article.id})">Delete</button>
+                        </div>
+                    ` : ''}
                 `;
                 articleList.appendChild(articleDiv);
             });
