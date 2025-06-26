@@ -198,7 +198,10 @@
                     if (adminForm) adminForm.classList.add('active');
                 }
 
-                // Load articles and sync localStorage in admin mode
+                // Check for unsaved changes in localStorage
+                checkUnsavedChanges();
+
+                // Load articles
                 loadArticles();
             } catch (error) {
                 console.error('Error initializing page:', error);
@@ -239,6 +242,30 @@
             } catch (error) {
                 console.error('Error exporting articles:', error);
                 alert(`Failed to export articles: ${error.message}. Check console for details.`);
+            }
+        }
+
+        async function checkUnsavedChanges() {
+            try {
+                const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
+                if (!isAdmin) return;
+
+                const articles = await fetchArticles();
+                let localArticles;
+                try {
+                    localArticles = JSON.parse(localStorage.getItem('articles') || '[]');
+                } catch (e) {
+                    console.error('Error parsing localStorage articles:', e);
+                    localArticles = [];
+                }
+
+                const articlesStr = JSON.stringify(articles);
+                const localArticlesStr = JSON.stringify(localArticles);
+                if (localArticles.length > 0 && articlesStr !== localArticlesStr) {
+                    alert('You have unsaved changes in local storage. Click "Export Articles" and upload to GitHub to save them permanently.');
+                }
+            } catch (error) {
+                console.error('Error checking unsaved changes:', error);
             }
         }
 
@@ -337,43 +364,41 @@
                     return;
                 }
 
-                let articles;
-                try {
-                    articles = JSON.parse(localStorage.getItem('articles') || '[]');
-                } catch (e) {
-                    console.error('Error parsing localStorage articles:', e);
-                    articles = [];
-                }
+                // Load articles.json for modification
+                fetchArticles().then(articles => {
+                    const article = articles.find(a => a.id === id);
+                    if (!article) {
+                        alert('Article not found in articles.json. Ensure it exists in the GitHub repository.');
+                        return;
+                    }
 
-                const article = articles.find(a => a.id === id);
-                if (!article) {
-                    alert('Article not found in local storage. Add or sync articles first.');
-                    return;
-                }
+                    const formTitle = document.getElementById('form-title');
+                    const editIdInput = document.getElementById('edit-id');
+                    const titleInput = document.getElementById('article-title');
+                    const contentInput = document.getElementById('article-content');
+                    const dateInput = document.getElementById('article-date');
+                    const tagsInput = document.getElementById('article-tags');
+                    const imageInput = document.getElementById('article-image');
+                    const adminForm = document.getElementById('admin-form');
 
-                const formTitle = document.getElementById('form-title');
-                const editIdInput = document.getElementById('edit-id');
-                const titleInput = document.getElementById('article-title');
-                const contentInput = document.getElementById('article-content');
-                const dateInput = document.getElementById('article-date');
-                const tagsInput = document.getElementById('article-tags');
-                const imageInput = document.getElementById('article-image');
-                const adminForm = document.getElementById('admin-form');
+                    if (!formTitle || !editIdInput || !titleInput || !contentInput || !dateInput || !tagsInput || !imageInput || !adminForm) {
+                        throw new Error('One or more form elements are missing.');
+                    }
 
-                if (!formTitle || !editIdInput || !titleInput || !contentInput || !dateInput || !tagsInput || !imageInput || !adminForm) {
-                    throw new Error('One or more form elements are missing.');
-                }
-
-                formTitle.textContent = 'Modify Article';
-                editIdInput.value = article.id;
-                titleInput.value = article.title;
-                contentInput.value = article.content;
-                dateInput.value = article.date;
-                tagsInput.value = article.tags.join(', ');
-                imageInput.value = article.image;
-                adminForm.classList.add('active');
-                window.scrollTo(0, adminForm.offsetTop);
-                alert('Modify the article and click "Submit Article", then "Export Articles" to update articles.json.');
+                    formTitle.textContent = 'Modify Article';
+                    editIdInput.value = article.id;
+                    titleInput.value = article.title;
+                    contentInput.value = article.content;
+                    dateInput.value = article.date;
+                    tagsInput.value = article.tags.join(', ');
+                    imageInput.value = article.image;
+                    adminForm.classList.add('active');
+                    window.scrollTo(0, adminForm.offsetTop);
+                    alert('Modify the article and click "Submit Article", then "Export Articles" to update articles.json.');
+                }).catch(error => {
+                    console.error('Error fetching articles for modify:', error);
+                    alert('Failed to load article for modification. Check console for details.');
+                });
             } catch (error) {
                 console.error('Error in modifyArticle:', error);
                 alert(`Failed to modify article: ${error.message}. Check console for details.`);
@@ -403,7 +428,7 @@
 
                 const articleIndex = articles.findIndex(article => article.id === id);
                 if (articleIndex === -1) {
-                    alert('Article not found in local storage.');
+                    alert('Article not found in local storage. Syncing with articles.json.');
                     return;
                 }
 
@@ -428,27 +453,7 @@
             try {
                 console.log('loadArticles called');
                 const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
-                let articles = await fetchArticles();
-                let localArticles;
-                try {
-                    localArticles = JSON.parse(localStorage.getItem('articles') || '[]');
-                } catch (e) {
-                    console.error('Error parsing localStorage articles:', e);
-                    localArticles = [];
-                }
-
-                // Sync localStorage with articles.json in admin mode
-                if (isAdmin && localArticles.length === 0 && articles.length > 0) {
-                    console.log('Syncing localStorage with articles.json');
-                    try {
-                        localStorage.setItem('articles', JSON.stringify(articles));
-                        localArticles = articles;
-                        alert('Local articles were empty. Synced with articles.json. Export after changes to update GitHub.');
-                    } catch (e) {
-                        console.error('Error syncing localStorage:', e);
-                        alert('Failed to sync local storage with articles.json. Check console for details.');
-                    }
-                }
+                const articles = await fetchArticles();
 
                 const articleList = document.getElementById('article-list');
                 if (!articleList) {
@@ -457,14 +462,12 @@
                 articleList.innerHTML = '';
                 const lang = document.getElementById('lang-switcher')?.value || 'mg';
 
-                const displayArticles = isAdmin ? localArticles : articles;
-
-                if (isAdmin && displayArticles.length === 0) {
-                    console.warn('No articles in localStorage for admin view');
-                    alert('No articles found in local storage. Add new articles or ensure articles.json is uploaded to GitHub.');
+                if (isAdmin && articles.length === 0) {
+                    console.warn('No articles in articles.json for admin view');
+                    alert('No articles found in articles.json. Add new articles and export to GitHub.');
                 }
 
-                displayArticles.forEach(article => {
+                articles.forEach(article => {
                     const articleDiv = document.createElement('div');
                     articleDiv.className = 'bg-white p-6 rounded-lg shadow-md article-card';
                     const excerpt = article.content.substring(0, 100).replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
