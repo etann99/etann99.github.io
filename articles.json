@@ -11,5 +11,15 @@
       "Frantsa]"
     ],
     "image": "https://news.cnrs.fr/sites/default/files/styles/visuel_principal/public/assets/images/zola_vp_1735701.jpg"
+  },
+  {
+    "id": 2,
+    "title": "ddd",
+    "content": "ddd",
+    "date": "2025-06-26",
+    "tags": [
+      "ddd"
+    ],
+    "image": "ddd"
   }
 ]
