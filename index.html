@@ -153,7 +153,7 @@
     </footer>
     <script>
         // GitHub Personal Access Token (replace with your own)
-        const githubToken = 'YOUR_PERSONAL_ACCESS_TOKEN_HERE';
+        const githubToken = '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';
         // Hashed password for 'nantenaina2025' (bcrypt, 10 rounds)
         const hashedPassword = '$2a$10$3zX9z7X3X2z7X3u6z7X3X2.6z7X3X2z7X3u6z7X3X2z7X3u6z7X3X';
         // GitHub API endpoint for articles.json
@@ -209,7 +209,7 @@
         }
 
         async function updateArticles(articles) {
-            if (!githubToken || githubToken === 'YOUR_PERSONAL_ACCESS_TOKEN_HERE') {
+            if (!githubToken || githubToken === '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') {
                 alert('GitHub Personal Access Token is missing or invalid. Please update it in the code.');
                 return false;
             }
