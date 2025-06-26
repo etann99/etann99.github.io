@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="mg">
 <head>
@@ -6,7 +7,6 @@
     <title>Rediredin'i Nantenaina</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-base64/3.7.2/base64.min.js"></script>
     <style>
         html, body { 
             height: 100%; 
@@ -104,6 +104,12 @@
         .modify-btn:hover { 
             background-color: #FF8C00; 
         }
+        .export-btn { 
+            background-color: #4CAF50; 
+        }
+        .export-btn:hover { 
+            background-color: #45a049; 
+        }
     </style>
 </head>
 <body>
@@ -138,7 +144,11 @@
                 <input type="date" id="article-date" required>
                 <input type="text" id="article-tags" placeholder="Tags (e.g., Fitiavana, Kolontsaina)">
                 <input type="url" id="article-image" placeholder="Image URL">
-                <button onclick="saveArticle()">Submit Article</button>
+                <div class="flex space-x-2">
+                    <button onclick="saveArticle()">Submit Article</button>
+                    <button class="export-btn" onclick="exportArticles()">Export Articles</button>
+                </div>
+                <p class="text-sm text-gray-600 mt-2">After submitting, click "Export Articles" and upload the downloaded file to GitHub (articles.json) to make changes visible to all.</p>
             </div>
             <div id="article-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Articles will be dynamically inserted here -->
@@ -152,12 +162,8 @@
         </div>
     </footer>
     <script>
-        // GitHub Personal Access Token (replace with your own)
-        const githubToken = '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';
         // Hashed password for 'nantenaina2025' (bcrypt, 10 rounds)
         const hashedPassword = '$2a$10$3zX9z7X3X2z7X3u6z7X3X2.6z7X3X2z7X3u6z7X3X2z7X3u6z7X3X';
-        // GitHub API endpoint for articles.json
-        const repoUrl = 'https://api.github.com/repos/Etann99/Etann99.github.io/contents/articles.json';
 
         // Basic HTML sanitizer
         function sanitizeHTML(str) {
@@ -203,108 +209,48 @@
                 return await response.json();
             } catch (error) {
                 console.error('Error fetching articles:', error);
-                alert('Failed to load articles. Check console for details.');
+                alert('Failed to load articles from articles.json. Check console for details.');
                 return [];
             }
         }
 
-        async function updateArticles(articles) {
-            if (!githubToken || githubToken === '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') {
-                alert('GitHub Personal Access Token is missing or invalid. Please update it in the code.');
-                return false;
-            }
+        function saveArticle() {
             try {
-                // Fetch current articles.json to get SHA
-                let sha;
-                try {
-                    const getResponse = await fetch(repoUrl, {
-                        headers: { 'Authorization': `token ${githubToken}` }
-                    });
-                    if (getResponse.status === 404) {
-                        // File doesn't exist, create new
-                        sha = null;
-                    } else if (!getResponse.ok) {
-                        throw new Error(`Failed to fetch articles.json: ${getResponse.statusText}`);
-                    } else {
-                        const fileData = await getResponse.json();
-                        sha = fileData.sha;
-                    }
-                } catch (error) {
-                    if (error.message.includes('404')) {
-                        sha = null;
-                    } else {
-                        throw error;
-                    }
+                const password = document.getElementById('admin-password').value;
+                if (!password) {
+                    alert('Please enter a password.');
+                    return;
+                }
+                if (!bcrypt.compareSync(password, hashedPassword)) {
+                    alert('Incorrect password.');
+                    return;
                 }
 
-                // Update articles.json
-                const content = Base64.encode(JSON.stringify(articles, null, 2));
-                const response = await fetch(repoUrl, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${githubToken}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: `Update articles.json at ${new Date().toISOString()}`,
-                        content: content,
-                        sha: sha || undefined
-                    })
-                });
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(`Failed to update articles: ${errorData.message || response.statusText}`);
+                const id = document.getElementById('edit-id').value ? parseInt(document.getElementById('edit-id').value) : null;
+                const title = sanitizeHTML(document.getElementById('article-title').value);
+                const content = document.getElementById('article-content').value;
+                const date = document.getElementById('article-date').value;
+                const tags = document.getElementById('article-tags').value.split(',').map(tag => sanitizeHTML(tag.trim())).filter(tag => tag);
+                const image = document.getElementById('article-image').value || 'https://mta.mg/wp-content/uploads/2021/05/Sunset-baobabs-Madagascar-mta-1.jpg';
+
+                if (!title || !content || !date) {
+                    alert('Please fill in title, content, and date.');
+                    return;
                 }
-                return true;
-            } catch (error) {
-                console.error('Error updating articles:', error);
-                alert(`Failed to update articles: ${error.message}. Check console for details.`);
-                return false;
-            }
-        }
 
-        async function saveArticle() {
-            const password = document.getElementById('admin-password').value;
-            if (!password) {
-                alert('Please enter a password.');
-                return;
-            }
-            if (!bcrypt.compareSync(password, hashedPassword)) {
-                alert('Incorrect password.');
-                return;
-            }
+                let articles = JSON.parse(localStorage.getItem('articles') || '[]');
+                if (id) {
+                    // Update existing article
+                    articles = articles.map(article => 
+                        article.id === id ? { id, title, content, date, tags, image } : article
+                    );
+                } else {
+                    // Add new article
+                    const newId = articles.length ? Math.max(...articles.map(a => a.id)) + 1 : 1;
+                    articles.push({ id: newId, title, content, date, tags, image });
+                }
+                localStorage.setItem('articles', JSON.stringify(articles));
 
-            const id = document.getElementById('edit-id').value ? parseInt(document.getElementById('edit-id').value) : null;
-            const title = sanitizeHTML(document.getElementById('article-title').value);
-            const content = document.getElementById('article-content').value;
-            const date = document.getElementById('article-date').value;
-            const tags = document.getElementById('article-tags').value.split(',').map(tag => sanitizeHTML(tag.trim())).filter(tag => tag);
-            const image = document.getElementById('article-image').value || 'https://mta.mg/wp-content/uploads/2021/05/Sunset-baobabs-Madagascar-mta-1.jpg';
-
-            if (!title || !content || !date) {
-                alert('Please fill in title, content, and date.');
-                return;
-            }
-
-            const articles = await fetchArticles();
-            if (id) {
-                // Update existing article
-                articles.forEach(article => {
-                    if (article.id === id) {
-                        article.title = title;
-                        article.content = content;
-                        article.date = date;
-                        article.tags = tags;
-                        article.image = image;
-                    }
-                });
-            } else {
-                // Add new article
-                const newId = articles.length ? Math.max(...articles.map(a => a.id)) + 1 : 1;
-                articles.push({ id: newId, title, content, date, tags, image });
-            }
-            const success = await updateArticles(articles);
-            if (success) {
                 // Reset form
                 document.getElementById('form-title').textContent = 'Add New Article';
                 document.getElementById('edit-id').value = '';
@@ -314,86 +260,131 @@
                 document.getElementById('article-date').value = '';
                 document.getElementById('article-tags').value = '';
                 document.getElementById('article-image').value = '';
+
+                alert('Article saved locally. Click "Export Articles" to download articles.json, then upload it to GitHub to make it visible to all.');
                 loadArticles();
+            } catch (error) {
+                console.error('Error saving article:', error);
+                alert('Failed to save article. Check console for details.');
             }
         }
 
-        async function modifyArticle(id) {
-            const password = prompt('Enter admin password to modify article:');
-            if (!password) {
-                alert('Please enter a password.');
-                return;
-            }
-            if (!bcrypt.compareSync(password, hashedPassword)) {
-                alert('Incorrect password.');
-                return;
-            }
-
-            const articles = await fetchArticles();
-            const article = articles.find(a => a.id === id);
-            if (article) {
-                document.getElementById('form-title').textContent = 'Modify Article';
-                document.getElementById('edit-id').value = article.id;
-                document.getElementById('article-title').value = article.title;
-                document.getElementById('article-content').value = article.content;
-                document.getElementById('article-date').value = article.date;
-                document.getElementById('article-tags').value = article.tags.join(', ');
-                document.getElementById('article-image').value = article.image;
-                document.getElementById('admin-form').classList.add('active');
-                window.scrollTo(0, document.getElementById('admin-form').offsetTop);
+        function exportArticles() {
+            try {
+                const articles = JSON.parse(localStorage.getItem('articles') || '[]');
+                const jsonStr = JSON.stringify(articles, null, 2);
+                const blob = new Blob([jsonStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'articles.json';
+                a.click();
+                URL.revokeObjectURL(url);
+                alert('Downloaded articles.json. Upload it to your GitHub repository (Etann99.github.io) to make changes visible to all.');
+            } catch (error) {
+                console.error('Error exporting articles:', error);
+                alert('Failed to export articles. Check console for details.');
             }
         }
 
-        async function deleteArticle(id) {
-            const password = prompt('Enter admin password to delete article:');
-            if (!password) {
-                alert('Please enter a password.');
-                return;
-            }
-            if (!bcrypt.compareSync(password, hashedPassword)) {
-                alert('Incorrect password.');
-                return;
-            }
+        function modifyArticle(id) {
+            try {
+                const password = prompt('Enter admin password to modify article:');
+                if (!password) {
+                    alert('Please enter a password.');
+                    return;
+                }
+                if (!bcrypt.compareSync(password, hashedPassword)) {
+                    alert('Incorrect password.');
+                    return;
+                }
 
-            const articles = await fetchArticles();
-            const updatedArticles = articles.filter(article => article.id !== id);
-            const success = await updateArticles(updatedArticles);
-            if (success) {
+                const articles = JSON.parse(localStorage.getItem('articles') || '[]');
+                const article = articles.find(a => a.id === id);
+                if (article) {
+                    document.getElementById('form-title').textContent = 'Modify Article';
+                    document.getElementById('edit-id').value = article.id;
+                    document.getElementById('article-title').value = article.title;
+                    document.getElementById('article-content').value = article.content;
+                    document.getElementById('article-date').value = article.date;
+                    document.getElementById('article-tags').value = article.tags.join(', ');
+                    document.getElementById('article-image').value = article.image;
+                    document.getElementById('admin-form').classList.add('active');
+                    window.scrollTo(0, document.getElementById('admin-form').offsetTop);
+                    alert('Modify the article and click "Submit Article", then "Export Articles" to update articles.json.');
+                } else {
+                    alert('Article not found in local storage. Ensure it’s been added locally first.');
+                }
+            } catch (error) {
+                console.error('Error modifying article:', error);
+                alert('Failed to modify article. Check console for details.');
+            }
+        }
+
+        function deleteArticle(id) {
+            try {
+                const password = prompt('Enter admin password to delete article:');
+                if (!password) {
+                    alert('Please enter a password.');
+                    return;
+                }
+                if (!bcrypt.compareSync(password, hashedPassword)) {
+                    alert('Incorrect password.');
+                    return;
+                }
+
+                let articles = JSON.parse(localStorage.getItem('articles') || '[]');
+                articles = articles.filter(article => article.id !== id);
+                localStorage.setItem('articles', JSON.stringify(articles));
+                alert('Article deleted locally. Click "Export Articles" to download articles.json, then upload to GitHub.');
                 loadArticles();
+            } catch (error) {
+                console.error('Error deleting article:', error);
+                alert('Failed to delete article. Check console for details.');
             }
         }
 
         async function loadArticles() {
-            const articles = await fetchArticles();
-            const articleList = document.getElementById('article-list');
-            articleList.innerHTML = '';
-            const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
-            const lang = document.getElementById('lang-switcher').value || 'mg';
+            try {
+                const articles = await fetchArticles();
+                // Merge with localStorage for admin preview
+                const localArticles = JSON.parse(localStorage.getItem('articles') || '[]');
+                const articleList = document.getElementById('article-list');
+                articleList.innerHTML = '';
+                const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
+                const lang = document.getElementById('lang-switcher').value || 'mg';
 
-            articles.forEach(article => {
-                const articleDiv = document.createElement('div');
-                articleDiv.className = 'bg-white p-6 rounded-lg shadow-md article-card';
-                const excerpt = article.content.substring(0, 100).replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
-                articleDiv.innerHTML = `
-                    <img src="${article.image}" alt="Article image" class="w-full mb-4 rounded">
-                    <h3 class="text-xl font-bold"><a href="article.html?id=${article.id}" class="hover:underline">${article.title}</a></h3>
-                    <p class="text-gray-500 text-sm">${new Date(article.date).toLocaleDateString('mg-MG')}</p>
-                    <div class="mt-2" style="white-space: pre-wrap;"><p>${excerpt}${article.content.length > 100 ? '...' : ''}</p></div>
-                    <p class="text-sm text-gray-600" data-lang-mg="Tenifototra" data-lang-fr="Étiquettes" data-lang-en="Tags">${lang === 'mg' ? 'Tenifototra' : lang === 'fr' ? 'Étiquettes' : 'Tags'}: ${article.tags.join(', ') || 'Tsia'}</p>
-                    <div class="mt-2">
-                        <a href="https://twitter.com/intent/tweet?url=https://Etann99.github.io/article.html?id=${article.id}&text=${encodeURIComponent(article.title)}" class="text-sm text-blue-600 hover:underline">Share on X</a> |
-                        <a href="mailto:?subject=${encodeURIComponent(article.title)}&body=Check out this article: https://Etann99.github.io/article.html?id=${article.id}" class="text-sm text-blue-600 hover:underline">Share via Email</a>
-                    </div>
-                    <a href="article.html?id=${article.id}" class="hover:underline">Hamaky Bebe Kokoa</a>
-                    ${isAdmin ? `
-                        <div class="mt-2 space-x-2">
-                            <button class="modify-btn" onclick="modifyArticle(${article.id})">Modify</button>
-                            <button class="delete-btn" onclick="deleteArticle(${article.id})">Delete</button>
+                // Use localArticles for admin, articles.json for visitors
+                const displayArticles = isAdmin ? localArticles : articles;
+
+                displayArticles.forEach(article => {
+                    const articleDiv = document.createElement('div');
+                    articleDiv.className = 'bg-white p-6 rounded-lg shadow-md article-card';
+                    const excerpt = article.content.substring(0, 100).replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
+                    articleDiv.innerHTML = `
+                        <img src="${article.image}" alt="Article image" class="w-full mb-4 rounded">
+                        <h3 class="text-xl font-bold"><a href="article.html?id=${article.id}" class="hover:underline">${article.title}</a></h3>
+                        <p class="text-gray-500 text-sm">${new Date(article.date).toLocaleDateString('mg-MG')}</p>
+                        <div class="mt-2" style="white-space: pre-wrap;"><p>${excerpt}${article.content.length > 100 ? '...' : ''}</p></div>
+                        <p class="text-sm text-gray-600" data-lang-mg="Tenifototra" data-lang-fr="Étiquettes" data-lang-en="Tags">${lang === 'mg' ? 'Tenifototra' : lang === 'fr' ? 'Étiquettes' : 'Tags'}: ${article.tags.join(', ') || 'Tsia'}</p>
+                        <div class="mt-2">
+                            <a href="https://twitter.com/intent/tweet?url=https://Etann99.github.io/article.html?id=${article.id}&text=${encodeURIComponent(article.title)}" class="text-sm text-blue-600 hover:underline">Share on X</a> |
+                            <a href="mailto:?subject=${encodeURIComponent(article.title)}&body=Check out this article: https://Etann99.github.io/article.html?id=${article.id}" class="text-sm text-blue-600 hover:underline">Share via Email</a>
                         </div>
-                    ` : ''}
-                `;
-                articleList.appendChild(articleDiv);
-            });
+                        <a href="article.html?id=${article.id}" class="hover:underline">Hamaky Bebe Kokoa</a>
+                        ${isAdmin ? `
+                            <div class="mt-2 space-x-2">
+                                <button class="modify-btn" onclick="modifyArticle(${article.id})">Modify</button>
+                                <button class="delete-btn" onclick="deleteArticle(${article.id})">Delete</button>
+                            </div>
+                        ` : ''}
+                    `;
+                    articleList.appendChild(articleDiv);
+                });
+            } catch (error) {
+                console.error('Error loading articles:', error);
+                alert('Failed to load articles. Check console for details.');
+            }
         }
     </script>
 </body>
