@@ -6,18 +6,52 @@
     <title>Fahendrena Malagasy - Rediredin'i Nantenaina</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { 
+        html, body { 
+            height: 100%; 
+            margin: 0; 
             font-family: 'Inter', sans-serif; 
             background: rgba(230, 243, 230, 0.9); 
             color: #1A1A1A; 
         }
-        article { font-family: 'Georgia', serif; line-height: 1.8; max-width: 800px; margin: auto; }
-        header { background-color: #5C2F2F; color: white; position: sticky; top: 0; z-index: 10; }
-        footer { background-color: #4A2C2A; color: white; }
-        a { color: #5C2F2F; transition: color 0.3s; }
-        a:hover { color: #D4A017; }
-        select { background: #5C2F2F; color: white; padding: 0.5rem; border-radius: 0.25rem; }
-        main { padding-bottom: 100px; }
+        body { 
+            display: flex; 
+            flex-direction: column; 
+        }
+        main { 
+            flex: 1 0 auto; 
+            padding-bottom: 100px; 
+        }
+        article { 
+            font-family: 'Georgia', serif; 
+            line-height: 1.8; 
+            max-width: 800px; 
+            margin: auto; 
+        }
+        header { 
+            background-color: #5C2F2F; 
+            color: white; 
+            position: sticky; 
+            top: 0; 
+            z-index: 10; 
+        }
+        footer { 
+            background-color: #4A2C2A; 
+            color: white; 
+            flex-shrink: 0; 
+        }
+        a { 
+            color: #5C2F2F; 
+            transition: color 0.3s; 
+        }
+        a:hover { 
+            color: #D4A017; 
+        }
+        select { 
+            background: #5C2F2F; 
+            color: white; 
+            padding: 0.5rem; 
+            border-radius: 0.25rem; 
+        }
     </style>
 </head>
 <body>
@@ -62,10 +96,19 @@
     <script>
         function switchLanguage() {
             const lang = document.getElementById('lang-switcher').value;
+            localStorage.setItem('selectedLanguage', lang);
             document.querySelectorAll('[data-lang-mg]').forEach(el => {
                 el.textContent = el.getAttribute(`data-lang-${lang}`);
             });
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('selectedLanguage') || 'mg';
+            document.getElementById('lang-switcher').value = savedLang;
+            document.querySelectorAll('[data-lang-mg]').forEach(el => {
+                el.textContent = el.getAttribute(`data-lang-${savedLang}`);
+            });
+        });
     </script>
 </body>
 </html>
