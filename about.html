@@ -57,8 +57,8 @@
 <body>
     <header class="shadow-md">
         <div class="container mx-auto px-4 py-6">
-            <h1 class="text-4xl font-bold font-['Raleway', sans-serif]" data-lang-mg="Rediredin'i Nantenaina" data-lang-fr="Divagations de Nantenaina" data-lang-en="Nantenaina's wanderings">Rediredin'i Nantenaina</h1>
-            <p class="text-lg" data-lang-mg="Eritreritra na fihetseham-po sendra nandalo, dia nantsoina mba hitafa, dia noraketina an-tsoratra." data-lang-fr="Pensées ou émotions passantes, appelées à dialoguer, puis écrites." data-lang-en="Passing thoughts or emotions, called to converse, then written down.">Eritreritra sendra nandalo, dia nantsoina mba hitafa, dia noraketina an-tsoratra.</p>
+            <h1 class="text-4xl font-bold font-['Raleway', sans-serif]" data-lang-mg="Rediredin'i Nantenaina" data-lang-fr="Divagations de Nantenaina" data-lang-en="Nantenaina's Wanderings">Rediredin'i Nantenaina</h1>
+            <p class="text-lg" data-lang-mg="Eritreritra na fihetseham-po sendra nandalo, dia nantsoina mba hitafa, dia noraketina an-tsoratra." data-lang-fr="Pensées ou émotions passantes, appelées à dialoguer, puis écrites." data-lang-en="Passing thoughts or emotions, called to converse, then written down.">Eritreritra na fihetseham-po sendra nandalo, dia nantsoina mba hitafa, dia noraketina an-tsoratra.</p>
             <nav class="mt-4 flex justify-between">
                 <ul class="flex space-x-4">
                     <li><a href="index.html" class="hover:underline" data-lang-mg="Fandraisana" data-lang-fr="Accueil" data-lang-en="Home">Fandraisana</a></li>
@@ -90,8 +90,7 @@
             const lang = document.getElementById('lang-switcher').value;
             localStorage.setItem('selectedLanguage', lang);
             document.querySelectorAll('[data-lang-mg]').forEach(el => {
-                const text = el.getAttribute(`data-lang-${lang}`);
-                if (text) el.textContent = text;
+                el.textContent = el.getAttribute(`data-lang-${lang}`);
             });
         }
 
@@ -99,8 +98,7 @@
             const savedLang = localStorage.getItem('selectedLanguage') || 'mg';
             document.getElementById('lang-switcher').value = savedLang;
             document.querySelectorAll('[data-lang-mg]').forEach(el => {
-                const text = el.getAttribute(`data-lang-${savedLang}`);
-                if (text) el.textContent = text;
+                el.textContent = el.getAttribute(`data-lang-${savedLang}`);
             });
         });
     </script>
