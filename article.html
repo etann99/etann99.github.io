@@ -55,6 +55,9 @@
         #article-text {
             white-space: pre-wrap;
         }
+        #article-text p {
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -80,7 +83,7 @@
         <article id="article-content">
             <h2 class="text-2xl font-semibold mb-2" id="article-title">Loading...</h2>
             <p class="text-gray-500 text-sm mb-4" id="article-date">Loading...</p>
-            <p id="article-text">Loading...</p>
+            <div id="article-text">Loading...</div>
             <p class="text-sm text-gray-600" id="article-tags" data-lang-mg="Tenifototra" data-lang-fr="Étiquettes" data-lang-en="Tags">Tenifototra: Tsia</p>
             <div class="mt-2">
                 <a id="share-x" href="#" class="text-sm text-blue-600 hover:underline">Share on X</a> |
@@ -96,27 +99,40 @@
         </div>
     </footer>
     <script>
+        // Basic HTML sanitizer
+        function sanitizeHTML(str) {
+            return str.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
         function switchLanguage() {
             const lang = document.getElementById('lang-switcher').value;
             localStorage.setItem('selectedLanguage', lang);
             document.querySelectorAll('[data-lang-mg]').forEach(el => {
-                el.textContent = el.getAttribute(`data-lang-${lang}`);
+                const text = el.getAttribute(`data-lang-${lang}`);
+                if (el.id === 'article-tags') {
+                    const articles = JSON.parse(localStorage.getItem('articles') || '[]');
+                    const id = parseInt(new URLSearchParams(window.location.search).get('id'));
+                    const article = articles.find(a => a.id === id);
+                    el.textContent = `${text}: ${article ? article.tags.join(', ') || 'Tsia' : 'Tsia'}`;
+                } else {
+                    el.textContent = text;
+                }
             });
-            // Refresh tags in current language
-            const urlParams = new URLSearchParams(window.location.search);
-            const id = parseInt(urlParams.get('id'));
-            const articles = JSON.parse(localStorage.getItem('articles') || '[]');
-            const article = articles.find(a => a.id === id);
-            if (article) {
-                document.getElementById('article-tags').textContent = `${document.getElementById('article-tags').getAttribute(`data-lang-${lang}`)}: ${article.tags.join(', ') || 'Tsia'}`;
-            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             const savedLang = localStorage.getItem('selectedLanguage') || 'mg';
             document.getElementById('lang-switcher').value = savedLang;
             document.querySelectorAll('[data-lang-mg]').forEach(el => {
-                el.textContent = el.getAttribute(`data-lang-${savedLang}`);
+                const text = el.getAttribute(`data-lang-${savedLang}`);
+                if (el.id === 'article-tags') {
+                    const articles = JSON.parse(localStorage.getItem('articles') || '[]');
+                    const id = parseInt(new URLSearchParams(window.location.search).get('id'));
+                    const article = articles.find(a => a.id === id);
+                    el.textContent = `${text}: ${article ? article.tags.join(', ') || 'Tsia' : 'Tsia'}`;
+                } else {
+                    el.textContent = text;
+                }
             });
 
             // Load article based on URL id
@@ -128,7 +144,7 @@
             if (article) {
                 document.getElementById('article-title').textContent = article.title;
                 document.getElementById('article-date').textContent = new Date(article.date).toLocaleDateString('mg-MG');
-                document.getElementById('article-text').textContent = article.content;
+                document.getElementById('article-text').innerHTML = article.content.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
                 document.getElementById('article-tags').textContent = `${document.getElementById('article-tags').getAttribute(`data-lang-${savedLang}`)}: ${article.tags.join(', ') || 'Tsia'}`;
                 document.getElementById('share-x').href = `https://twitter.com/intent/tweet?url=https://Etann99.github.io/article.html?id=${article.id}&text=${encodeURIComponent(article.title)}`;
                 document.getElementById('share-email').href = `mailto:?subject=${encodeURIComponent(article.title)}&body=Check out this article: https://Etann99.github.io/article.html?id=${article.id}`;
