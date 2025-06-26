@@ -244,6 +244,7 @@
 
         function saveArticle() {
             try {
+                console.log('saveArticle called');
                 const passwordInput = document.getElementById('admin-password');
                 const titleInput = document.getElementById('article-title');
                 const contentInput = document.getElementById('article-content');
@@ -325,6 +326,7 @@
 
         function modifyArticle(id) {
             try {
+                console.log('modifyArticle called with id:', id);
                 const password = prompt('Enter admin password to modify article:');
                 if (!password) {
                     alert('Please enter a password.');
@@ -367,7 +369,7 @@
                 titleInput.value = article.title;
                 contentInput.value = article.content;
                 dateInput.value = article.date;
-                tagsInput.value = article.Tags.join(', ');
+                tagsInput.value = article.tags.join(', ');
                 imageInput.value = article.image;
                 adminForm.classList.add('active');
                 window.scrollTo(0, adminForm.offsetTop);
@@ -380,6 +382,7 @@
 
         function deleteArticle(id) {
             try {
+                console.log('deleteArticle called with id:', id);
                 const password = prompt('Enter admin password to delete article:');
                 if (!password) {
                     alert('Please enter a password.');
@@ -423,6 +426,7 @@
 
         async function loadArticles() {
             try {
+                console.log('loadArticles called');
                 const articles = await fetchArticles();
                 let localArticles;
                 try {
