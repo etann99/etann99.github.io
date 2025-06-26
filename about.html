@@ -88,10 +88,19 @@
     <script>
         function switchLanguage() {
             const lang = document.getElementById('lang-switcher').value;
+            localStorage.setItem('selectedLanguage', lang);
             document.querySelectorAll('[data-lang-mg]').forEach(el => {
                 el.textContent = el.getAttribute(`data-lang-${lang}`);
             });
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('selectedLanguage') || 'mg';
+            document.getElementById('lang-switcher').value = savedLang;
+            document.querySelectorAll('[data-lang-mg]').forEach(el => {
+                el.textContent = el.getAttribute(`data-lang-${savedLang}`);
+            });
+        });
     </script>
 </body>
 </html>
