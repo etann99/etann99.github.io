@@ -87,6 +87,12 @@
         button:hover { 
             background-color: #D4A017; 
         }
+        .delete-btn { 
+            background-color: #B22222; 
+        }
+        .delete-btn:hover { 
+            background-color: #8B0000; 
+        }
     </style>
 </head>
 <body>
@@ -118,7 +124,12 @@
                 <input type="text" id="article-title" placeholder="Article Title" required>
                 <textarea id="article-content" placeholder="Article Content" rows="5" required></textarea>
                 <input type="date" id="article-date" required>
-                <input type="text" id="article-tags" placeholder="Tags (comma-separated)">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium">Tags (comma-separated)</label>
+                    <input type="text" id="tags-mg" placeholder="Malagasy Tags (e.g., Fitiavana, Kolontsaina)" class="mb-2">
+                    <input type="text" id="tags-fr" placeholder="French Tags (e.g., Amour, Culture)">
+                    <input type="text" id="tags-en" placeholder="English Tags (e.g., Love, Culture)">
+                </div>
                 <input type="url" id="article-image" placeholder="Image URL">
                 <button onclick="addArticle()">Submit Article</button>
             </div>
@@ -140,6 +151,7 @@
             document.querySelectorAll('[data-lang-mg]').forEach(el => {
                 el.textContent = el.getAttribute(`data-lang-${lang}`);
             });
+            loadArticles(); // Refresh articles to update tag language
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -169,12 +181,25 @@
             const title = document.getElementById('article-title').value;
             const content = document.getElementById('article-content').value;
             const date = document.getElementById('article-date').value;
-            const tags = document.getElementById('article-tags').value.split(',').map(tag => tag.trim()).filter(tag => tag);
+            const tagsMg = document.getElementById('tags-mg').value.split(',').map(tag => tag.trim()).filter(tag => tag);
+            const tagsFr = document.getElementById('tags-fr').value.split(',').map(tag => tag.trim()).filter(tag => tag);
+            const tagsEn = document.getElementById('tags-en').value.split(',').map(tag => tag.trim()).filter(tag => tag);
             const image = document.getElementById('article-image').value || 'https://mta.mg/wp-content/uploads/2021/05/Sunset-baobabs-Madagascar-mta-1.jpg';
 
             if (!title || !content || !date) {
                 alert('Please fill in title, content, and date.');
                 return;
+            }
+
+            // Ensure tags are aligned across languages
+            const maxLength = Math.max(tagsMg.length, tagsFr.length, tagsEn.length);
+            const tags = [];
+            for (let i = 0; i < maxLength; i++) {
+                tags.push({
+                    mg: tagsMg[i] || tagsMg[0] || 'None',
+                    fr: tagsFr[i] || tagsFr[0] || 'Aucun',
+                    en: tagsEn[i] || tagsEn[0] || 'None'
+                });
             }
 
             const articles = JSON.parse(localStorage.getItem('articles') || '[]');
@@ -186,9 +211,24 @@
             document.getElementById('article-title').value = '';
             document.getElementById('article-content').value = '';
             document.getElementById('article-date').value = '';
-            document.getElementById('article-tags').value = '';
+            document.getElementById('tags-mg').value = '';
+            document.getElementById('tags-fr').value = '';
+            document.getElementById('tags-en').value = '';
             document.getElementById('article-image').value = '';
 
+            loadArticles();
+        }
+
+        function deleteArticle(id) {
+            const password = prompt('Enter admin password to delete article:');
+            if (password !== 'nantenaina2025') {
+                alert('Incorrect password.');
+                return;
+            }
+
+            let articles = JSON.parse(localStorage.getItem('articles') || '[]');
+            articles = articles.filter(article => article.id !== id);
+            localStorage.setItem('articles', JSON.stringify(articles));
             loadArticles();
         }
 
@@ -196,21 +236,25 @@
             const articles = JSON.parse(localStorage.getItem('articles') || '[]');
             const articleList = document.getElementById('article-list');
             articleList.innerHTML = '';
+            const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
+            const lang = document.getElementById('lang-switcher').value || 'mg';
 
             articles.forEach(article => {
                 const articleDiv = document.createElement('div');
                 articleDiv.className = 'bg-white p-6 rounded-lg shadow-md article-card';
+                const tagsInLang = article.tags.map(tag => tag[lang]).join(', ') || 'None';
                 articleDiv.innerHTML = `
                     <img src="${article.image}" alt="Article image" class="w-full mb-4 rounded">
                     <h3 class="text-xl font-bold"><a href="article.html?id=${article.id}" class="hover:underline">${article.title}</a></h3>
-                    <p class="text-gray-500 text-sm">${new Date(article.date).toLocaleDateString('mg-MG')} • 5 min read</p>
+                    <p class="text-gray-500 text-sm">${new Date(article.date).toLocaleDateString('mg-MG')}</p>
                     <p class="mt-2">${article.content.substring(0, 100)}...</p>
-                    <p class="text-sm text-gray-600">Tags: ${article.tags.join(', ') || 'None'}</p>
+                    <p class="text-sm text-gray-600">Tags: ${tagsInLang}</p>
                     <div class="mt-2">
                         <a href="https://twitter.com/intent/tweet?url=https://Etann99.github.io/article.html?id=${article.id}&text=${encodeURIComponent(article.title)}" class="text-sm text-blue-600 hover:underline">Share on X</a> |
                         <a href="mailto:?subject=${encodeURIComponent(article.title)}&body=Check out this article: https://Etann99.github.io/article.html?id=${article.id}" class="text-sm text-blue-600 hover:underline">Share via Email</a>
                     </div>
                     <a href="article.html?id=${article.id}" class="hover:underline">Hamaky Bebe Kokoa</a>
+                    ${isAdmin ? `<button class="delete-btn mt-2" onclick="deleteArticle(${article.id})">Delete</button>` : ''}
                 `;
                 articleList.appendChild(articleDiv);
             });
