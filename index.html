@@ -1,43 +1,4 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="mg">
 <head>
     <meta charset="UTF-8">
@@ -47,8 +8,7 @@
     <style>
         body { 
             font-family: 'Inter', sans-serif; 
-            background: rgba(230, 243, 230, 0.9) url('https://images.unsplash.com/photo-1620228882913-0e4c5f24f8dd') no-repeat center center fixed; 
-            background-size: cover; 
+            background: rgba(230, 243, 230, 0.9); 
             color: #1A1A1A; 
         }
         article { font-family: 'Georgia', serif; line-height: 1.8; }
@@ -61,6 +21,7 @@
         .article-card:hover { transform: scale(1.02); }
         .proverb { font-style: italic; color: #4A2C2A; }
         select { background: #5C2F2F; color: white; padding: 0.5rem; border-radius: 0.25rem; }
+        main { padding-bottom: 100px; }
     </style>
 </head>
 <body>
@@ -92,8 +53,8 @@
                 <p class="mt-2">Ny fahendrena Malagasy dia mampifandray ny olona amin’ny lova sy ny soatoavina...</p>
                 <p class="text-sm text-gray-600">Tags: Teny Malagasy, Kolontsaina Malagasy, Filosofia</p>
                 <div class="mt-2">
-                    <a href="https://twitter.com/intent/tweet?url=https://yourusername.github.io/article1.html&text=Fahendrena Malagasy" class="text-sm text-blue-600 hover:underline">Share on X</a> |
-                    <a href="mailto:?subject=Fahendrena Malagasy&body=Check out this article: https://yourusername.github.io/article1.html" class="text-sm text-blue-600 hover:underline">Share via Email</a>
+                    <a href="https://twitter.com/intent/tweet?url=https://Etann99.github.io/article1.html&text=Fahendrena Malagasy" class="text-sm text-blue-600 hover:underline">Share on X</a> |
+                    <a href="mailto:?subject=Fahendrena Malagasy&body=Check out this article: https://Etann99.github.io/article1.html" class="text-sm text-blue-600 hover:underline">Share via Email</a>
                 </div>
                 <a href="article1.html" class="hover:underline">Hamaky Bebe Kokoa</a>
             </div>
@@ -102,14 +63,14 @@
             <h2 class="text-2xl font-semibold mb-4" data-lang-mg="Lahatsoratra Vao Haingana" data-lang-fr="Articles récents" data-lang-en="Recent Articles">Lahatsoratra Vao Haingana</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-white p-6 rounded-lg shadow-md article-card">
-                    <img src="https://images.unsplash.com/photo-1620228882913-0e4c5f24f8dd" alt="Malagasy textile" class="w-full mb-4 rounded">
+                    <img src="https://mta.mg/wp-content/uploads/2021/05/Sunset-baobabs-Madagascar-mta-1.jpg" alt="Malagasy landscape" class="w-full mb-4 rounded">
                     <h3 class="text-xl font-bold"><a href="article1.html" class="hover:underline">Fahendrena Malagasy: Ny Lovan’ny Tany sy ny Olona</a></h3>
                     <p class="text-gray-500 text-sm">26 Jona 2025 • 5 min read</p>
                     <p class="mt-2">Ny fahendrena Malagasy dia mampifandray ny olona amin’ny lova sy ny soatoavina...</p>
                     <p class="text-sm text-gray-600">Tags: Teny Malagasy, Kolontsaina Malagasy, Filosofia</p>
                     <div class="mt-2">
-                        <a href="https://twitter.com/intent/tweet?url=https://yourusername.github.io/article1.html&text=Fahendrena Malagasy" class="text-sm text-blue-600 hover:underline">Share on X</a> |
-                        <a href="mailto:?subject=Fahendrena Malagasy&body=Check out this article: https://yourusername.github.io/article1.html" class="text-sm text-blue-600 hover:underline">Share via Email</a>
+                        <a href="https://twitter.com/intent/tweet?url=https://Etann99.github.io/article1.html&text=Fahendrena Malagasy" class="text-sm text-blue-600 hover:underline">Share on X</a> |
+                        <a href="mailto:?subject=Fahendrena Malagasy&body=Check out this article: https://Etann99.github.io/article1.html" class="text-sm text-blue-600 hover:underline">Share via Email</a>
                     </div>
                     <a href="article1.html" class="hover:underline">Hamaky Bebe Kokoa</a>
                 </div>
