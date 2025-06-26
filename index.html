@@ -64,13 +64,36 @@
             padding: 0.5rem; 
             border-radius: 0.25rem; 
         }
+        #admin-form { 
+            display: none; 
+        }
+        #admin-form.active { 
+            display: block; 
+        }
+        input, textarea { 
+            border: 1px solid #5C2F2F; 
+            border-radius: 0.25rem; 
+            padding: 0.5rem; 
+            width: 100%; 
+            margin-bottom: 1rem; 
+        }
+        button { 
+            background-color: #5C2F2F; 
+            color: white; 
+            padding: 0.5rem 1rem; 
+            border-radius: 0.25rem; 
+            cursor: pointer; 
+        }
+        button:hover { 
+            background-color: #D4A017; 
+        }
     </style>
 </head>
 <body>
     <header class="shadow-md">
         <div class="container mx-auto px-4 py-6">
-            <h1 class="text-4xl font-bold font-['Raleway', sans-serif]" data-lang-mg="Rediredin'i Nantenaina" data-lang-fr="Divagations de Nantenaina" data-lang-en="Nantenaina's wanderings">Rediredin'i Nantenaina</h1>
-            <p class="text-lg" data-lang-mg="Eritreritra na fihetseham-po sendra nandalo, dia nantsoina mba hitafa, dia noraketina an-tsoratra." data-lang-fr="Pensées ou émotions passantes, appelées à dialoguer, puis écrites." data-lang-en="Passing thoughts or emotions, called to converse, then written down.">Eritreritra sendra nandalo, dia nantsoina mba hitafa, dia noraketina an-tsoratra.</p>
+            <h1 class="text-4xl font-bold font-['Raleway', sans-serif]" data-lang-mg="Rediredin'i Nantenaina" data-lang-fr="Divagations de Nantenaina" data-lang-en="Nantenaina's Wanderings">Rediredin'i Nantenaina</h1>
+            <p class="text-lg" data-lang-mg="Eritreritra na fihetseham-po sendra nandalo, dia nantsoina mba hitafa, dia noraketina an-tsoratra." data-lang-fr="Pensées ou émotions passantes, appelées à dialoguer, puis écrites." data-lang-en="Passing thoughts or emotions, called to converse, then written down.">Eritreritra na fihetseham-po sendra nandalo, dia nantsoina mba hitafa, dia noraketina an-tsoratra.</p>
             <nav class="mt-4 flex justify-between">
                 <ul class="flex space-x-4">
                     <li><a href="index.html" class="hover:underline" data-lang-mg="Fandraisana" data-lang-fr="Accueil" data-lang-en="Home">Fandraisana</a></li>
@@ -87,35 +110,20 @@
     </header>
     <main class="container mx-auto px-4 py-8">
         <section class="mb-12">
-            <h2 class="text-2xl font-semibold mb-4" data-lang-mg="Lahatsoratra Nasongadina" data-lang-fr="Article en vedette" data-lang-en="Featured Article">Lahatsoratra Nasongadina</h2>
             <p class="proverb mb-4">"Ny fanahy no maha olona" – Ohabolana Malagasy</p>
-            <div class="bg-white p-6 rounded-lg shadow-md article-card">
-                <h3 class="text-xl font-bold"><a href="article1.html" class="hover:underline">Fahendrena Malagasy: Ny Lovan’ny Tany sy ny Olona</a></h3>
-                <p class="text-gray-500 text-sm">26 Jona 2025 • 5 min read</p>
-                <p class="mt-2">Ny fahendrena Malagasy dia mampifandray ny olona amin’ny lova sy ny soatoavina...</p>
-                <p class="text-sm text-gray-600">Tags: Teny Malagasy, Kolontsaina Malagasy, Filosofia</p>
-                <div class="mt-2">
-                    <a href="https://twitter.com/intent/tweet?url=https://Etann99.github.io/article1.html&text=Fahendrena Malagasy" class="text-sm text-blue-600 hover:underline">Share on X</a> |
-                    <a href="mailto:?subject=Fahendrena Malagasy&body=Check out this article: https://Etann99.github.io/article1.html" class="text-sm text-blue-600 hover:underline">Share via Email</a>
-                </div>
-                <a href="article1.html" class="hover:underline">Hamaky Bebe Kokoa</a>
+            <h2 class="text-2xl font-semibold mb-4" data-lang-mg="Lahatsoratra Rehetra" data-lang-fr="Tous les articles" data-lang-en="All Articles">Lahatsoratra Rehetra</h2>
+            <div id="admin-form" class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <h3 class="text-xl font-bold mb-4">Add New Article</h3>
+                <input type="password" id="admin-password" placeholder="Admin Password" required>
+                <input type="text" id="article-title" placeholder="Article Title" required>
+                <textarea id="article-content" placeholder="Article Content" rows="5" required></textarea>
+                <input type="date" id="article-date" required>
+                <input type="text" id="article-tags" placeholder="Tags (comma-separated)">
+                <input type="url" id="article-image" placeholder="Image URL">
+                <button onclick="addArticle()">Submit Article</button>
             </div>
-        </section>
-        <section>
-            <h2 class="text-2xl font-semibold mb-4" data-lang-mg="Lahatsoratra Vao Haingana" data-lang-fr="Articles récents" data-lang-en="Recent Articles">Lahatsoratra Vao Haingana</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-white p-6 rounded-lg shadow-md article-card">
-                    <img src="https://mta.mg/wp-content/uploads/2021/05/Sunset-baobabs-Madagascar-mta-1.jpg" alt="Malagasy landscape" class="w-full mb-4 rounded">
-                    <h3 class="text-xl font-bold"><a href="article1.html" class="hover:underline">Fahendrena Malagasy: Ny Lovan’ny Tany sy ny Olona</a></h3>
-                    <p class="text-gray-500 text-sm">26 Jona 2025 • 5 min read</p>
-                    <p class="mt-2">Ny fahendrena Malagasy dia mampifandray ny olona amin’ny lova sy ny soatoavina...</p>
-                    <p class="text-sm text-gray-600">Tags: Teny Malagasy, Kolontsaina Malagasy, Filosofia</p>
-                    <div class="mt-2">
-                        <a href="https://twitter.com/intent/tweet?url=https://Etann99.github.io/article1.html&text=Fahendrena Malagasy" class="text-sm text-blue-600 hover:underline">Share on X</a> |
-                        <a href="mailto:?subject=Fahendrena Malagasy&body=Check out this article: https://Etann99.github.io/article1.html" class="text-sm text-blue-600 hover:underline">Share via Email</a>
-                    </div>
-                    <a href="article1.html" class="hover:underline">Hamaky Bebe Kokoa</a>
-                </div>
+            <div id="article-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Articles will be dynamically inserted here -->
             </div>
         </section>
     </main>
@@ -140,7 +148,73 @@
             document.querySelectorAll('[data-lang-mg]').forEach(el => {
                 el.textContent = el.getAttribute(`data-lang-${savedLang}`);
             });
+
+            // Show admin form if ?admin=true in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('admin') === 'true') {
+                document.getElementById('admin-form').classList.add('active');
+            }
+
+            // Load and display articles
+            loadArticles();
         });
+
+        function addArticle() {
+            const password = document.getElementById('admin-password').value;
+            if (password !== 'nantenaina2025') {
+                alert('Incorrect password.');
+                return;
+            }
+
+            const title = document.getElementById('article-title').value;
+            const content = document.getElementById('article-content').value;
+            const date = document.getElementById('article-date').value;
+            const tags = document.getElementById('article-tags').value.split(',').map(tag => tag.trim()).filter(tag => tag);
+            const image = document.getElementById('article-image').value || 'https://mta.mg/wp-content/uploads/2021/05/Sunset-baobabs-Madagascar-mta-1.jpg';
+
+            if (!title || !content || !date) {
+                alert('Please fill in title, content, and date.');
+                return;
+            }
+
+            const articles = JSON.parse(localStorage.getItem('articles') || '[]');
+            const id = articles.length ? articles[articles.length - 1].id + 1 : 1;
+            articles.push({ id, title, content, date, tags, image });
+            localStorage.setItem('articles', JSON.stringify(articles));
+
+            document.getElementById('admin-password').value = '';
+            document.getElementById('article-title').value = '';
+            document.getElementById('article-content').value = '';
+            document.getElementById('article-date').value = '';
+            document.getElementById('article-tags').value = '';
+            document.getElementById('article-image').value = '';
+
+            loadArticles();
+        }
+
+        function loadArticles() {
+            const articles = JSON.parse(localStorage.getItem('articles') || '[]');
+            const articleList = document.getElementById('article-list');
+            articleList.innerHTML = '';
+
+            articles.forEach(article => {
+                const articleDiv = document.createElement('div');
+                articleDiv.className = 'bg-white p-6 rounded-lg shadow-md article-card';
+                articleDiv.innerHTML = `
+                    <img src="${article.image}" alt="Article image" class="w-full mb-4 rounded">
+                    <h3 class="text-xl font-bold"><a href="article.html?id=${article.id}" class="hover:underline">${article.title}</a></h3>
+                    <p class="text-gray-500 text-sm">${new Date(article.date).toLocaleDateString('mg-MG')} • 5 min read</p>
+                    <p class="mt-2">${article.content.substring(0, 100)}...</p>
+                    <p class="text-sm text-gray-600">Tags: ${article.tags.join(', ') || 'None'}</p>
+                    <div class="mt-2">
+                        <a href="https://twitter.com/intent/tweet?url=https://Etann99.github.io/article.html?id=${article.id}&text=${encodeURIComponent(article.title)}" class="text-sm text-blue-600 hover:underline">Share on X</a> |
+                        <a href="mailto:?subject=${encodeURIComponent(article.title)}&body=Check out this article: https://Etann99.github.io/article.html?id=${article.id}" class="text-sm text-blue-600 hover:underline">Share via Email</a>
+                    </div>
+                    <a href="article.html?id=${article.id}" class="hover:underline">Hamaky Bebe Kokoa</a>
+                `;
+                articleList.appendChild(articleDiv);
+            });
+        }
     </script>
 </body>
 </html>
