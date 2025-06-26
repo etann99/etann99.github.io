@@ -99,9 +99,18 @@
         </div>
     </footer>
     <script>
-        // Basic HTML sanitizer
-        function sanitizeHTML(str) {
-            return str.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        async function fetchArticles() {
+            try {
+                const response = await fetch('articles.json');
+                if (!response.ok) {
+                    if (response.status === 404) return [];
+                    throw new Error('Failed to fetch articles');
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching articles:', error);
+                return [];
+            }
         }
 
         function switchLanguage() {
@@ -110,26 +119,24 @@
             document.querySelectorAll('[data-lang-mg]').forEach(el => {
                 const text = el.getAttribute(`data-lang-${lang}`);
                 if (el.id === 'article-tags') {
-                    const articles = JSON.parse(localStorage.getItem('articles') || '[]');
-                    const id = parseInt(new URLSearchParams(window.location.search).get('id'));
-                    const article = articles.find(a => a.id === id);
-                    el.textContent = `${text}: ${article ? article.tags.join(', ') || 'Tsia' : 'Tsia'}`;
+                    fetchArticles().then(articles => {
+                        const id = parseInt(new URLSearchParams(window.location.search).get('id'));
+                        const article = articles.find(a => a.id === id);
+                        el.textContent = `${text}: ${article ? article.tags.join(', ') || 'Tsia' : 'Tsia'}`;
+                    });
                 } else {
                     el.textContent = text;
                 }
             });
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             const savedLang = localStorage.getItem('selectedLanguage') || 'mg';
             document.getElementById('lang-switcher').value = savedLang;
             document.querySelectorAll('[data-lang-mg]').forEach(el => {
                 const text = el.getAttribute(`data-lang-${savedLang}`);
                 if (el.id === 'article-tags') {
-                    const articles = JSON.parse(localStorage.getItem('articles') || '[]');
-                    const id = parseInt(new URLSearchParams(window.location.search).get('id'));
-                    const article = articles.find(a => a.id === id);
-                    el.textContent = `${text}: ${article ? article.tags.join(', ') || 'Tsia' : 'Tsia'}`;
+                    // Handled below
                 } else {
                     el.textContent = text;
                 }
@@ -138,7 +145,7 @@
             // Load article based on URL id
             const urlParams = new URLSearchParams(window.location.search);
             const id = parseInt(urlParams.get('id'));
-            const articles = JSON.parse(localStorage.getItem('articles') || '[]');
+            const articles = await fetchArticles();
             const article = articles.find(a => a.id === id);
 
             if (article) {
