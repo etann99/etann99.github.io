@@ -161,7 +161,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             try {
-                console.log('Page initializing');
+                console.log('Starting DOMContentLoaded');
                 const savedLang = localStorage.getItem('selectedLanguage') || 'mg';
                 document.getElementById('lang-switcher').value = savedLang;
                 document.querySelectorAll('[data-lang-mg]').forEach(el => {
@@ -185,6 +185,7 @@
                 backToTop.addEventListener('click', () => {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 });
+                console.log('DOMContentLoaded completed');
             } catch (error) {
                 console.error('Error initializing page:', error);
                 alert('Failed to initialize page. Check console for details.');
@@ -247,6 +248,9 @@
                 alert(`Failed to load article: ${error.message}. Check console for details.');
             }
         }
+
+        console.log('Script loaded successfully');
+        // Script End
     </script>
 </body>
 </html>
