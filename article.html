@@ -3,64 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rediredin'i Nantenaina</title>
+    <title>Rediredin'i Nantenaina - Article</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        html, body { 
-            height: 100%; 
-            margin: 0; 
-            font-family: 'Inter', sans-serif; 
-            background: rgba(230, 243, 230, 0.9); 
-            color: #1A1A1A; 
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: rgba(230, 243, 230, 0.9);
+            color: #1A1A1A;
         }
-        body { 
-            display: flex; 
-            flex-direction: column; 
+        body {
+            display: flex;
+            flex-direction: column;
         }
-        main { 
-            flex: 1 0 auto; 
-            padding-bottom: 100px; 
+        main {
+            flex: 1 0 auto;
+            padding-bottom: 100px;
         }
-        article { 
-            font-family: 'Georgia', serif; 
-            line-height: 1.8; 
-            max-width: 800px; 
-            margin: auto; 
-        }
-        header { 
-            background-color: #5C2F2F; 
-            color: white; 
-            position: sticky; 
-            top: 0; 
-            z-index: 10; 
-        }
-        footer { 
-            background-color: #4A2C2A; 
-            color: white; 
-            flex-shrink: 0; 
-        }
-        a { 
-            color: #5C2F2F; 
-            transition: color 0.3s; 
-        }
-        a:hover { 
-            color: #D4A017; 
-        }
-        select { 
-            background: #5C2F2F; 
-            color: white; 
-            padding: 0.5rem; 
-            border-radius: 0.25rem; 
-        }
-        #article-text {
+        article {
+            font-family: 'Georgia', serif;
+            line-height: 1.8;
             white-space: pre-wrap;
         }
-        #article-text p {
-            margin-bottom: 1rem;
+        header {
+            background-color: #5C2F2F;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        footer {
+            background-color: #4A2C2A;
+            color: white;
+            flex-shrink: 0;
+        }
+        a {
+            color: #5C2F2F;
+            transition: color 0.3s;
+        }
+        a:hover {
+            color: #D4A017;
+        }
+        select {
+            background: #5C2F2F;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+        }
+        #progress-bar {
+            position: sticky;
+            top: 0;
+            height: 4px;
+            background-color: #D4A017;
+            width: 0%;
+            z-index: 20;
+            transition: width 0.2s ease-in-out;
+        }
+        #back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #5C2F2F;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            z-index: 30;
+        }
+        #back-to-top:hover {
+            background-color: #D4A017;
+        }
+        .metadata {
+            font-size: 0.9rem;
+            color: #4A2C2A;
+            font-style: italic;
+            margin-top: 0.5rem;
+        }
+        .social-share a {
+            margin-right: 1rem;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
+    <div id="progress-bar"></div>
     <header class="shadow-md">
         <div class="container mx-auto px-4 py-6">
             <h1 class="text-4xl font-bold font-['Raleway', sans-serif]" data-lang-mg="Rediredin'i Nantenaina" data-lang-fr="Divagations de Nantenaina" data-lang-en="Nantenaina's Wanderings">Rediredin'i Nantenaina</h1>
@@ -80,17 +108,20 @@
         </div>
     </header>
     <main class="container mx-auto px-4 py-8">
-        <article id="article-content">
-            <h2 class="text-2xl font-semibold mb-2" id="article-title">Loading...</h2>
-            <p class="text-gray-500 text-sm mb-4" id="article-date">Loading...</p>
-            <div id="article-text">Loading...</div>
-            <p class="text-sm text-gray-600" id="article-tags" data-lang-mg="Tenifototra" data-lang-fr="Étiquettes" data-lang-en="Tags">Tenifototra: Tsia</p>
-            <div class="mt-2">
-                <a id="share-x" href="#" class="text-sm text-blue-600 hover:underline">Share on X</a> |
-                <a id="share-email" href="#" class="text-sm text-blue-600 hover:underline">Share via Email</a>
+        <section class="mb-12">
+            <h2 id="article-title" class="text-3xl font-bold mb-4"></h2>
+            <p id="article-date" class="text-gray-500 text-sm"></p>
+            <p id="article-metadata" class="metadata"></p>
+            <div id="article-content" class="mt-4"></div>
+            <p id="article-tags" class="text-sm text-gray-600 mt-4" data-lang-mg="Tenifototra" data-lang-fr="Étiquettes" data-lang-en="Tags"></p>
+            <div class="social-share mt-4">
+                <a id="share-x" class="text-blue-600 hover:underline" data-lang-mg="Zarao amin'ny X" data-lang-fr="Partager sur X" data-lang-en="Share on X"></a> |
+                <a id="share-email" class="text-blue-600 hover:underline" data-lang-mg="Zarao amin'ny mailaka" data-lang-fr="Partager par email" data-lang-en="Share via Email"></a> |
+                <a id="share-facebook" class="text-blue-600 hover:underline" data-lang-mg="Zarao amin'ny Facebook" data-lang-fr="Partager sur Facebook" data-lang-en="Share on Facebook"></a> |
+                <a id="share-whatsapp" class="text-blue-600 hover:underline" data-lang-mg="Zarao amin'ny WhatsApp" data-lang-fr="Partager sur WhatsApp" data-lang-en="Share on WhatsApp"></a> |
+                <a id="share-linkedin" class="text-blue-600 hover:underline" data-lang-mg="Zarao amin'ny LinkedIn" data-lang-fr="Partager sur LinkedIn" data-lang-en="Share on LinkedIn"></a>
             </div>
-            <a href="index.html" class="hover:underline" data-lang-mg="Hiverina amin’ny Fandraisana" data-lang-fr="Retour à l'Accueil" data-lang-en="Back to Home">Hiverina amin’ny Fandraisana</a>
-        </article>
+        </section>
     </main>
     <footer class="py-6">
         <div class="container mx-auto px-4">
@@ -98,68 +129,121 @@
             <p data-lang-mg="Hifandraisa:" data-lang-fr="Contactez-moi :" data-lang-en="Connect:">Hifandraisa: <a href="mailto:elnantenaina99@gmail.com" class="hover:underline">elnantenaina99@gmail.com</a></p>
         </div>
     </footer>
+    <button id="back-to-top" data-lang-mg="Hiakatra" data-lang-fr="Retour en haut" data-lang-en="Back to Top">Hiakatra</button>
     <script>
+        // Basic HTML sanitizer
+        function sanitizeHTML(str) {
+            if (typeof str !== 'string') return '';
+            return str.replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '"').replace(/'/g, "'");
+        }
+
+        // Calculate word count
+        function getWordCount(content) {
+            return content.split(/\s+/).filter(word => word.length > 0).length;
+        }
+
+        function switchLanguage() {
+            try {
+                const lang = document.getElementById('lang-switcher').value;
+                localStorage.setItem('selectedLanguage', lang);
+                document.querySelectorAll('[data-lang-mg]').forEach(el => {
+                    el.textContent = el.getAttribute(`data-lang-${lang}`);
+                });
+                loadArticle();
+            } catch (error) {
+                console.error('Error switching language:', error);
+                alert('Failed to switch language. Check console for details.');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                console.log('Page initializing');
+                const savedLang = localStorage.getItem('selectedLanguage') || 'mg';
+                document.getElementById('lang-switcher').value = savedLang;
+                document.querySelectorAll('[data-lang-mg]').forEach(el => {
+                    el.textContent = el.getAttribute(`data-lang-${savedLang}`);
+                });
+                loadArticle();
+
+                // Reading progress bar
+                const progressBar = document.getElementById('progress-bar');
+                window.addEventListener('scroll', () => {
+                    const totalHeight = document.body.scrollHeight - window.innerHeight;
+                    const progress = (window.scrollY / totalHeight) * 100;
+                    progressBar.style.width = `${progress}%`;
+                });
+
+                // Back to top button
+                const backToTop = document.getElementById('back-to-top');
+                window.addEventListener('scroll', () => {
+                    backToTop.style.display = window.scrollY > 300 ? 'block' : 'none';
+                });
+                backToTop.addEventListener('click', () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            } catch (error) {
+                console.error('Error initializing page:', error);
+                alert('Failed to initialize page. Check console for details.');
+            }
+        });
+
         async function fetchArticles() {
             try {
+                console.log('Fetching articles.json');
                 const response = await fetch('articles.json');
                 if (!response.ok) {
-                    if (response.status === 404) return [];
-                    throw new Error('Failed to fetch articles');
+                    if (response.status === 404) {
+                        console.warn('articles.json not found, returning empty array');
+                        return [];
+                    }
+                    throw new Error(`Failed to fetch articles: ${response.statusText} (Status: ${response.status})`);
                 }
                 return await response.json();
             } catch (error) {
                 console.error('Error fetching articles:', error);
+                alert('Failed to load articles from articles.json. Check console for details.');
                 return [];
             }
         }
 
-        function switchLanguage() {
-            const lang = document.getElementById('lang-switcher').value;
-            localStorage.setItem('selectedLanguage', lang);
-            document.querySelectorAll('[data-lang-mg]').forEach(el => {
-                const text = el.getAttribute(`data-lang-${lang}`);
-                if (el.id === 'article-tags') {
-                    fetchArticles().then(articles => {
-                        const id = parseInt(new URLSearchParams(window.location.search).get('id'));
-                        const article = articles.find(a => a.id === id);
-                        el.textContent = `${text}: ${article ? article.tags.join(', ') || 'Tsia' : 'Tsia'}`;
-                    });
-                } else {
-                    el.textContent = text;
+        async function loadArticle() {
+            try {
+                console.log('loadArticle called');
+                const urlParams = new URLSearchParams(window.location.search);
+                const id = parseInt(urlParams.get('id'));
+                if (!id) {
+                    document.getElementById('article-title').textContent = 'Article Not Found';
+                    return;
                 }
-            });
-        }
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            const savedLang = localStorage.getItem('selectedLanguage') || 'mg';
-            document.getElementById('lang-switcher').value = savedLang;
-            document.querySelectorAll('[data-lang-mg]').forEach(el => {
-                const text = el.getAttribute(`data-lang-${savedLang}`);
-                if (el.id === 'article-tags') {
-                    // Handled below
-                } else {
-                    el.textContent = text;
+                const articles = await fetchArticles();
+                const article = articles.find(a => a.id === id);
+                if (!article) {
+                    document.getElementById('article-title').textContent = 'Article Not Found';
+                    return;
                 }
-            });
 
-            // Load article based on URL id
-            const urlParams = new URLSearchParams(window.location.search);
-            const id = parseInt(urlParams.get('id'));
-            const articles = await fetchArticles();
-            const article = articles.find(a => a.id === id);
-
-            if (article) {
+                const lang = document.getElementById('lang-switcher')?.value || 'mg';
+                console.log('Rendering article:', article.title, 'Language:', lang);
                 document.getElementById('article-title').textContent = article.title;
                 document.getElementById('article-date').textContent = new Date(article.date).toLocaleDateString('mg-MG');
-                document.getElementById('article-text').innerHTML = article.content.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
-                document.getElementById('article-tags').textContent = `${document.getElementById('article-tags').getAttribute(`data-lang-${savedLang}`)}: ${article.tags.join(', ') || 'Tsia'}`;
-                document.getElementById('share-x').href = `https://twitter.com/intent/tweet?url=https://Etann99.github.io/article.html?id=${article.id}&text=${encodeURIComponent(article.title)}`;
-                document.getElementById('share-email').href = `mailto:?subject=${encodeURIComponent(article.title)}&body=Check out this article: https://Etann99.github.io/article.html?id=${article.id}`;
-                document.title = `${article.title} - Rediredin'i Nantenaina`;
-            } else {
-                document.getElementById('article-content').innerHTML = '<p>Article not found.</p>';
+                document.getElementById('article-metadata').textContent = `${lang === 'mg' ? 'Nosoratan\'i' : lang === 'fr' ? 'Écrit par' : 'Written by'} Nantenaina Ratsimbazafy | ${getWordCount(article.content)} ${lang === 'mg' ? 'teny' : lang === 'fr' ? 'mots' : 'words'}`;
+                document.getElementById('article-content').innerHTML = article.content.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
+                document.getElementById('article-tags').innerHTML = `${lang === 'mg' ? 'Tenifototra' : lang === 'fr' ? 'Étiquettes' : 'Tags'}: ${article.tags.join(', ') || 'Tsia'}`;
+
+                const articleUrl = `https://Etann99.github.io/article.html?id=${article.id}`;
+                const encodedTitle = encodeURIComponent(article.title);
+                document.getElementById('share-x').href = `https://twitter.com/intent/tweet?url=${articleUrl}&text=${encodedTitle}`;
+                document.getElementById('share-email').href = `mailto:?subject=${encodedTitle}&body=Check out this article: ${articleUrl}`;
+                document.getElementById('share-facebook').href = `https://www.facebook.com/sharer/sharer.php?u=${articleUrl}`;
+                document.getElementById('share-whatsapp').href = `https://api.whatsapp.com/send?text=${encodedTitle}%20${articleUrl}`;
+                document.getElementById('share-linkedin').href = `https://www.linkedin.com/shareArticle?mini=true&url=${articleUrl}&title=${encodedTitle}`;
+            } catch (error) {
+                console.error('Error in loadArticle:', error);
+                alert(`Failed to load article: ${error.message}. Check console for details.`);
             }
-        });
+        }
     </script>
 </body>
 </html>
