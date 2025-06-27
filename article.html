@@ -64,8 +64,8 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background-color: #5C2F2F;
-            color: white;
+            background-color: #8B4513;
+            color: #FFF8E1;
             padding: 0.5rem 1rem;
             border-radius: 50%;
             cursor: pointer;
@@ -73,17 +73,20 @@
             z-index: 30;
         }
         #back-to-top:hover {
-            background-color: #D4A017;
+            background-color: #A0522D;
         }
         .metadata {
-            font-size: 0.9rem;
-            color: #4A2C2A;
-            font-style: italic;
+            font-size: 1rem;
+            color: #1A1A1A;
             margin-top: 0.5rem;
         }
         .social-share a {
             margin-right: 1rem;
-            font-size: 0.9rem;
+            font-size: 1rem;
+            color: #5C2F2F;
+        }
+        .social-share a:hover {
+            color: #D4A017;
         }
     </style>
 </head>
@@ -115,11 +118,11 @@
             <div id="article-content" class="mt-4"></div>
             <p id="article-tags" class="text-sm text-gray-600 mt-4" data-lang-mg="Tenifototra" data-lang-fr="Étiquettes" data-lang-en="Tags"></p>
             <div class="social-share mt-4">
-                <a id="share-x" class="text-blue-600 hover:underline" data-lang-mg="Zarao amin'ny X" data-lang-fr="Partager sur X" data-lang-en="Share on X"></a> |
-                <a id="share-email" class="text-blue-600 hover:underline" data-lang-mg="Zarao amin'ny mailaka" data-lang-fr="Partager par email" data-lang-en="Share via Email"></a> |
-                <a id="share-facebook" class="text-blue-600 hover:underline" data-lang-mg="Zarao amin'ny Facebook" data-lang-fr="Partager sur Facebook" data-lang-en="Share on Facebook"></a> |
-                <a id="share-whatsapp" class="text-blue-600 hover:underline" data-lang-mg="Zarao amin'ny WhatsApp" data-lang-fr="Partager sur WhatsApp" data-lang-en="Share on WhatsApp"></a> |
-                <a id="share-linkedin" class="text-blue-600 hover:underline" data-lang-mg="Zarao amin'ny LinkedIn" data-lang-fr="Partager sur LinkedIn" data-lang-en="Share on LinkedIn"></a>
+                <a id="share-x" class="hover:underline" data-lang-mg="Zarao amin'ny X" data-lang-fr="Partager sur X" data-lang-en="Share on X"></a> |
+                <a id="share-email" class="hover:underline" data-lang-mg="Zarao amin'ny mailaka" data-lang-fr="Partager par email" data-lang-en="Share via Email"></a> |
+                <a id="share-facebook" class="hover:underline" data-lang-mg="Zarao amin'ny Facebook" data-lang-fr="Partager sur Facebook" data-lang-en="Share on Facebook"></a> |
+                <a id="share-whatsapp" class="hover:underline" data-lang-mg="Zarao amin'ny WhatsApp" data-lang-fr="Partager sur WhatsApp" data-lang-en="Share on WhatsApp"></a> |
+                <a id="share-linkedin" class="hover:underline" data-lang-mg="Zarao amin'ny LinkedIn" data-lang-fr="Partager sur LinkedIn" data-lang-en="Share on LinkedIn"></a>
             </div>
         </section>
     </main>
@@ -129,7 +132,7 @@
             <p data-lang-mg="Hifandraisa:" data-lang-fr="Contactez-moi :" data-lang-en="Connect:">Hifandraisa: <a href="mailto:elnantenaina99@gmail.com" class="hover:underline">elnantenaina99@gmail.com</a></p>
         </div>
     </footer>
-    <button id="back-to-top" data-lang-mg="Hiakatra" data-lang-fr="Retour en haut" data-lang-en="Back to Top">Hiakatra</button>
+    <button id="back-to-top" data-lang-mg="Hiverina any ambony" data-lang-fr="Retour en haut" data-lang-en="Back to Top">Hiverina any ambony</button>
     <script>
         // Basic HTML sanitizer
         function sanitizeHTML(str) {
@@ -241,7 +244,7 @@
                 document.getElementById('share-linkedin').href = `https://www.linkedin.com/shareArticle?mini=true&url=${articleUrl}&title=${encodedTitle}`;
             } catch (error) {
                 console.error('Error in loadArticle:', error);
-                alert(`Failed to load article: ${error.message}. Check console for details.`);
+                alert(`Failed to load article: ${error.message}. Check console for details.');
             }
         }
     </script>
