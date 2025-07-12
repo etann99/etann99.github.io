@@ -10,8 +10,18 @@
             height: 100%; 
             margin: 0; 
             font-family: 'Inter', sans-serif; 
-            background: rgba(230, 243, 230, 0.9); 
-            color: #1A1A1A; 
+            color: #FFFFFF; /* White text for readability */
+            background: #000; /* Black background for starry canvas */
+            overflow: hidden; /* Prevent canvas scrollbars */
+        }
+        canvas#stars {
+            display: block;
+            position: fixed; /* Changed to fixed for full viewport coverage */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Behind content */
         }
         body { 
             display: flex; 
@@ -42,21 +52,27 @@
             flex-shrink: 0; 
         }
         a { 
-            color: #5C2F2F; 
+            color: #D4A017; /* Gold for visibility */
             transition: color 0.3s; 
         }
         a:hover { 
-            color: #D4A017; 
+            color: #FFD700; /* Brighter gold on hover */
         }
         .article-card { 
             transition: transform 0.2s; 
+            background-color: rgba(255, 255, 255, 0.9); /* Slightly translucent */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
         }
         .article-card:hover { 
             transform: scale(1.02); 
         }
+        .article-card h3, .article-card p { 
+            color: #1A1A1A; /* Dark text in cards */
+        }
         .proverb { 
             font-style: italic; 
-            color: #4A2C2A; 
+            color: #FFFFFF; /* White for readability */
+            text-shadow: 0 0 2px rgba(0, 0, 0, 0.5); /* Subtle shadow for contrast */
         }
         select { 
             background: #5C2F2F; 
@@ -71,11 +87,13 @@
             display: block; 
         }
         input, textarea { 
-            border: 1px solid #5C2F2F; 
+            border: 1px solid #FFFFFF; /* White border */
             border-radius: 0.25rem; 
             padding: 0.5rem; 
             width: 100%; 
             margin-bottom: 1rem; 
+            background: rgba(255, 255, 255, 0.1); /* Transparent background */
+            color: #FFFFFF; /* White text */
         }
         textarea {
             white-space: pre-wrap;
@@ -108,9 +126,15 @@
         .export-btn:hover { 
             background-color: #45a049; 
         }
+        @media (max-width: 640px) {
+            html, body {
+                overflow: auto; /* Allow scrolling on mobile */
+            }
+        }
     </style>
 </head>
 <body>
+    <canvas id="stars"></canvas>
     <header class="shadow-md">
         <div class="container mx-auto px-4 py-6">
             <h1 class="text-4xl font-bold font-['Raleway', sans-serif]" data-lang-mg="Rediredin'i Nantenaina" data-lang-fr="Divagations de Nantenaina" data-lang-en="Nantenaina's Wanderings">Rediredin'i Nantenaina</h1>
@@ -131,7 +155,7 @@
     </header>
     <main class="container mx-auto px-4 py-8">
         <section class="mb-12">
-            <p class="proverb mb-4">"Ny fanahy no olona" – Ohabolana Malagasy</p>
+            <p class="proverb mb-4" data-lang-mg="Ny fanahy no olona" data-lang-fr="L'âme fait l'homme" data-lang-en="The soul makes the person">Ny fanahy no olona</p>
             <h2 class="text-2xl font-semibold mb-4" data-lang-mg="Lahatsoratra Rehetra" data-lang-fr="Tous les articles" data-lang-en="All Articles">Lahatsoratra Rehetra</h2>
             <div id="admin-form" class="bg-white p-6 rounded-lg shadow-md mb-6">
                 <h3 class="text-xl font-bold mb-4" id="form-title">Add New Article</h3>
@@ -156,6 +180,7 @@
     <footer class="py-6">
         <div class="container mx-auto px-4">
             <p data-lang-mg="© 2025 Nantenaina Ratsimbazafy. Zo rehetra voatokana." data-lang-fr="© 2025 Nantenaina Ratsimbazafy. Tous droits réservés." data-lang-en="© 2025 Nantenaina Ratsimbazafy. All rights reserved.">© 2025 Nantenaina Ratsimbazafy. Zo rehetra voatokana.</p>
+        </div>
     </footer>
     <script>
         // Plain password for admin actions
@@ -170,6 +195,7 @@
         function switchLanguage() {
             try {
                 const lang = document.getElementById('lang-switcher').value;
+                if (localStorage.getItem('selectedLanguage') === lang) return; // Prevent redundant updates
                 localStorage.setItem('selectedLanguage', lang);
                 document.querySelectorAll('[data-lang-mg]').forEach(el => {
                     el.textContent = el.getAttribute(`data-lang-${lang}`);
@@ -183,6 +209,70 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             try {
+                // Initialize starry background
+                const canvas = document.getElementById('stars');
+                if (!canvas) {
+                    console.error('Canvas element not found');
+                    return;
+                }
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    console.error('Failed to get canvas context');
+                    return;
+                }
+
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+
+                const stars = [];
+                const numStars = 200;
+
+                for (let i = 0; i < numStars; i++) {
+                    stars.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        radius: Math.random() * 1.5 + 0.5,
+                        opacity: Math.random() * 0.5 + 0.5,
+                        speed: Math.random() * 0.3 + 0.2,
+                        speedOpacity: Math.random() * 0.02 + 0.01
+                    });
+                }
+
+                function animate() {
+                    try {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        stars.forEach(star => {
+                            star.x += star.speed * 0.7;
+                            star.y += star.speed * 0.5;
+
+                            if (star.x > canvas.width || star.y > canvas.height) {
+                                star.x = Math.random() * canvas.width - canvas.width;
+                                star.y = Math.random() * canvas.height - canvas.height;
+                            }
+
+                            ctx.beginPath();
+                            ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                            ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+                            ctx.fill();
+
+                            star.opacity += Math.sin(Date.now() * star.speedOpacity) * 0.05;
+                            if (star.opacity > 1) star.opacity = 1;
+                            if (star.opacity < 0.3) star.opacity = 0.3;
+                        });
+                        requestAnimationFrame(animate);
+                    } catch (error) {
+                        console.error('Error in animation:', error);
+                    }
+                }
+
+                window.addEventListener('resize', () => {
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                });
+
+                animate();
+
+                // Initialize language
                 const savedLang = localStorage.getItem('selectedLanguage') || 'mg';
                 document.getElementById('lang-switcher').value = savedLang;
                 document.querySelectorAll('[data-lang-mg]').forEach(el => {
@@ -239,7 +329,7 @@
                 alert('Downloaded articles.json. Upload it to your GitHub repository (Etann99/Etann99.github.io) at articles.json to make changes visible to all.');
             } catch (error) {
                 console.error('Error exporting articles:', error);
-                alert(`Failed to export articles: ${error.message}. Check console for details.`);
+                alert(`Failed to export articles: ${error.message}. Check console for details.');
             }
         }
 
@@ -362,7 +452,6 @@
                     return;
                 }
 
-                // Load articles.json for modification
                 fetchArticles().then(articles => {
                     const article = articles.find(a => a.id === id);
                     if (!article) {
@@ -452,7 +541,6 @@
                 console.log('loadArticles called');
                 const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
                 const articles = await fetchArticles();
-
                 const articleList = document.getElementById('article-list');
                 if (!articleList) {
                     throw new Error('Article list element not found.');
