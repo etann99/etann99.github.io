@@ -156,13 +156,6 @@
             min-height: calc(100vh - 200px);
         }
 
-        /* Footer */
-        footer {
-            position: relative;
-            z-index: 10;
-            margin-top: 4rem;
-        }
-
         /* Article Cards */
         .article-card {
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -313,6 +306,13 @@
             transform: translateY(-2px);
         }
 
+        /* Footer */
+        footer {
+            position: relative;
+            z-index: 10;
+            margin-top: 4rem;
+        }
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .article-card:hover {
@@ -386,35 +386,16 @@
     </footer>
 
     <script>
+        // Admin password
         const adminPassword = 'nantenaina2025';
 
-        const sampleArticles = [
-            {
-                id: 1,
-                title: "Ny Fitiavana sy ny Fiainam-pirenena",
-                content: "Ny fitiavana dia tsy misy fetrany. Izany no mahatonga ny fiainana ho tsara tarehy.\n\nRaha misy olona tia anao dia mazava ho azy fa tsara ny fiainanao. Ny fitiavana dia tsy mety raisina ho toy ny zavatra tsotra fotsiny fa tsy maintsy hajaina sy tsiahivina.\n\nAry ny fitiavan'ny firenena kosa dia miavaka. Izany dia fitiavana tsy misy fe-potoana, fitiavana tsy mivadika.",
-                date: "2025-01-15",
-                tags: ["Fitiavana", "Fiainana", "Kolontsaina"],
-                image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=300&fit=crop&crop=face"
-            },
-            {
-                id: 2,
-                title: "Fahatsiarovana ny Tanindrazana",
-                content: "Madagascar dia tany mahafinaritra. Ny tanindraza no tsara indrindra.\n\nTsy mety hadino ny razana fa izy ireo no nanorina ny fiainantsika ankehitriny. Ny kolontsaina malagasy dia harena tsy hay lanja.\n\nNy fomba amam-panao sy ny fiteny ary ny hira rehetra dia tokony hotazonina sy holovaina.",
-                date: "2025-01-10",
-                tags: ["Tanindrazana", "Fahatsiarovana", "Razana"],
-                image: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=500&h=300&fit=crop"
-            },
-            {
-                id: 3,
-                title: "Hevitra momba ny Fihavanana",
-                content: "Ny fihavanana dia fototry ny fiainan'ny Malagasy rehetra.\n\nRaha misy olona tsy mahay ny fihavanana dia tsy afaka miaina tsara izy. Ny fihavanana dia tsy vola fa fihetseham-po.\n\nIzany no mahatonga ny fiaraha-monina ho matanjaka sy ho vonona hiara-hiasa.",
-                date: "2025-01-05",
-                tags: ["Fihavanana", "Fomba", "Fiaraha-miasa"],
-                image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=500&h=300&fit=crop"
-            }
-        ];
+        // Basic HTML sanitizer
+        function sanitizeHTML(str) {
+            if (typeof str !== 'string') return '';
+            return str.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
 
+        // Create animated stars
         function createStars() {
             const container = document.getElementById('stars-container');
             const numberOfStars = 100;
@@ -442,132 +423,317 @@
         }
 
         function switchLanguage() {
-            const lang = document.getElementById('lang-switcher').value;
-            document.querySelectorAll('[data-lang-mg]').forEach(el => {
-                el.textContent = el.getAttribute(`data-lang-${lang}`);
-            });
-        }
-
-        function loadArticles() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const isAdmin = urlParams.get('admin') === 'true';
-            const articleList = document.getElementById('article-list');
-            const lang = document.getElementById('lang-switcher').value || 'mg';
-
-            articleList.innerHTML = '';
-
-            sampleArticles.forEach(article => {
-                const articleDiv = document.createElement('div');
-                articleDiv.className = 'glass article-card p-6';
-                const excerpt = article.content.substring(0, 120) + (article.content.length > 120 ? '...' : '');
-                
-                articleDiv.innerHTML = `
-                    <div class="article-image mb-4 overflow-hidden">
-                        <img src="${article.image}" alt="Article image" class="w-full h-48 object-cover">
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">
-                        <a href="#" class="link-gradient">${article.title}</a>
-                    </h3>
-                    <p class="text-gray-600 text-sm mb-3">${new Date(article.date).toLocaleDateString()}</p>
-                    <div class="text-gray-700 mb-4" style="white-space: pre-line;">${excerpt}</div>
-                    <div class="flex flex-wrap gap-2 mb-4">
-                        ${article.tags.map(tag => `<span class="px-3 py-1 bg-gradient-to-r from-blue-400 to-purple-500 text-white text-xs rounded-full">${tag}</span>`).join('')}
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <a href="#" class="link-gradient">Hamaky bebe kokoa →</a>
-                        <div class="flex space-x-2">
-                            <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}" class="text-blue-500 hover:text-blue-700">📱</a>
-                            <a href="mailto:?subject=${encodeURIComponent(article.title)}" class="text-gray-500 hover:text-gray-700">✉️</a>
-                        </div>
-                    </div>
-                    ${isAdmin ? `
-                        <div class="mt-4 pt-4 border-t border-gray-200 flex space-x-2">
-                            <button onclick="modifyArticle(${article.id})" class="px-3 py-1 bg-yellow-500 text-white rounded text-sm">Modify</button>
-                            <button onclick="deleteArticle(${article.id})" class="px-3 py-1 bg-red-500 text-white rounded text-sm">Delete</button>
-                        </div>
-                    ` : ''}
-                `;
-                articleList.appendChild(articleDiv);
-            });
-        }
-
-        function saveArticle() {
-            const password = document.getElementById('admin-password').value;
-            if (password !== adminPassword) {
-                alert('Incorrect password.');
-                return;
+            try {
+                const lang = document.getElementById('lang-switcher').value;
+                try {
+                    localStorage.setItem('selectedLanguage', lang);
+                } catch(e) {
+                    console.warn('localStorage not available');
+                }
+                document.querySelectorAll('[data-lang-mg]').forEach(el => {
+                    el.textContent = el.getAttribute(`data-lang-${lang}`);
+                });
+                loadArticles();
+            } catch (error) {
+                console.error('Error switching language:', error);
+                alert('Failed to switch language. Check console for details.');
             }
-            
-            // Clear form
-            document.getElementById('admin-password').value = '';
-            document.getElementById('article-title').value = '';
-            document.getElementById('article-content').value = '';
-            document.getElementById('article-date').value = '';
-            document.getElementById('article-tags').value = '';
-            document.getElementById('article-image').value = '';
-            
-            alert('Article saved locally. Export to make changes permanent.');
-        }
-
-        function exportArticles() {
-            const jsonStr = JSON.stringify(sampleArticles, null, 2);
-            const blob = new Blob([jsonStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'articles.json';
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function downloadWebsite() {
-            // Get the current HTML content
-            const htmlContent = document.documentElement.outerHTML;
-            
-            // Create a Blob with the HTML content
-            const blob = new Blob([htmlContent], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            
-            // Create download link
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'nantenaina-blog.html';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            alert('Site web téléchargé ! Vous pouvez maintenant l\'ouvrir dans n\'importe quel navigateur.');
-        }
-
-        function modifyArticle(id) {
-            const password = prompt('Enter admin password:');
-            if (password !== adminPassword) {
-                alert('Incorrect password.');
-                return;
-            }
-            alert('Article modification feature would be implemented here.');
-        }
-
-        function deleteArticle(id) {
-            const password = prompt('Enter admin password:');
-            if (password !== adminPassword) {
-                alert('Incorrect password.');
-                return;
-            }
-            alert('Article deletion feature would be implemented here.');
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            createStars();
-            
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('admin') === 'true') {
-                document.getElementById('admin-form').classList.add('active');
+            try {
+                createStars();
+                
+                const savedLang = (typeof Storage !== "undefined" && localStorage.getItem('selectedLanguage')) || 'mg';
+                document.getElementById('lang-switcher').value = savedLang;
+                document.querySelectorAll('[data-lang-mg]').forEach(el => {
+                    el.textContent = el.getAttribute(`data-lang-${savedLang}`);
+                });
+
+                // Show admin form if ?admin=true
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('admin') === 'true') {
+                    const adminForm = document.getElementById('admin-form');
+                    if (adminForm) adminForm.classList.add('active');
+                }
+
+                // Check for unsaved changes in localStorage
+                checkUnsavedChanges();
+
+                // Load articles
+                loadArticles();
+            } catch (error) {
+                console.error('Error initializing page:', error);
+                alert('Failed to initialize page. Check console for details.');
             }
-            
-            loadArticles();
         });
-    </script>
-</body>
-</html>
+
+        async function fetchArticles() {
+            try {
+                const response = await fetch('articles.json');
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        console.warn('articles.json not found, returning empty array');
+                        return [];
+                    }
+                    throw new Error(`Failed to fetch articles: ${response.statusText} (Status: ${response.status})`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching articles:', error);
+                alert('Failed to load articles from articles.json. Check console for details.');
+                return [];
+            }
+        }
+
+        function exportArticles() {
+            try {
+                const articles = JSON.parse(localStorage.getItem('articles') || '[]');
+                const jsonStr = JSON.stringify(articles, null, 2);
+                const blob = new Blob([jsonStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'articles.json';
+                a.click();
+                URL.revokeObjectURL(url);
+                alert('Downloaded articles.json. Upload it to your GitHub repository (Etann99/Etann99.github.io) at articles.json to make changes visible to all.');
+            } catch (error) {
+                console.error('Error exporting articles:', error);
+                alert(`Failed to export articles: ${error.message}. Check console for details.`);
+            }
+        }
+
+        async function checkUnsavedChanges() {
+            try {
+                const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
+                if (!isAdmin) return;
+
+                const articles = await fetchArticles();
+                let localArticles;
+                try {
+                    localArticles = JSON.parse(localStorage.getItem('articles') || '[]');
+                } catch (e) {
+                    console.error('Error parsing localStorage articles:', e);
+                    localArticles = [];
+                }
+
+                const articlesStr = JSON.stringify(articles);
+                const localArticlesStr = JSON.stringify(localArticles);
+                if (localArticles.length > 0 && articlesStr !== localArticlesStr) {
+                    alert('You have unsaved changes in local storage. Click "Export Articles" and upload to GitHub to save them permanently.');
+                }
+            } catch (error) {
+                console.error('Error checking unsaved changes:', error);
+            }
+        }
+
+        function saveArticle() {
+            try {
+                console.log('saveArticle called');
+                const passwordInput = document.getElementById('admin-password');
+                const titleInput = document.getElementById('article-title');
+                const contentInput = document.getElementById('article-content');
+                const dateInput = document.getElementById('article-date');
+                const tagsInput = document.getElementById('article-tags');
+                const imageInput = document.getElementById('article-image');
+                const editIdInput = document.getElementById('edit-id');
+
+                if (!passwordInput || !titleInput || !contentInput || !dateInput || !tagsInput || !imageInput || !editIdInput) {
+                    throw new Error('One or more form elements are missing.');
+                }
+
+                const password = passwordInput.value;
+                if (!password) {
+                    alert('Please enter a password.');
+                    return;
+                }
+                if (password !== adminPassword) {
+                    alert('Incorrect password.');
+                    return;
+                }
+
+                const id = editIdInput.value ? parseInt(editIdInput.value) : null;
+                const title = sanitizeHTML(titleInput.value);
+                const content = contentInput.value;
+                const date = dateInput.value;
+                const tags = tagsInput.value.split(',').map(tag => sanitizeHTML(tag.trim())).filter(tag => tag);
+                const image = imageInput.value || 'https://mta.mg/wp-content/uploads/2021/05/Sunset-baobabs-Madagascar-mta-1.jpg';
+
+                if (!title || !content || !date) {
+                    alert('Please fill in title, content, and date.');
+                    return;
+                }
+
+                let articles;
+                try {
+                    articles = JSON.parse(localStorage.getItem('articles') || '[]');
+                } catch (e) {
+                    console.error('Error parsing localStorage articles:', e);
+                    articles = [];
+                }
+
+                if (id) {
+                    const articleIndex = articles.findIndex(article => article.id === id);
+                    if (articleIndex === -1) {
+                        alert('Article to modify not found in local storage.');
+                        return;
+                    }
+                    articles[articleIndex] = { id, title, content, date, tags, image };
+                } else {
+                    const newId = articles.length ? Math.max(...articles.map(a => a.id)) + 1 : 1;
+                    articles.push({ id: newId, title, content, date, tags, image });
+                }
+
+                try {
+                    localStorage.setItem('articles', JSON.stringify(articles));
+                } catch (e) {
+                    console.error('Error saving to localStorage:', e);
+                    alert('Failed to save to local storage. Try clearing browser data or using another browser.');
+                    return;
+                }
+
+                document.getElementById('form-title').textContent = 'Add New Article';
+                editIdInput.value = '';
+                passwordInput.value = '';
+                titleInput.value = '';
+                contentInput.value = '';
+                dateInput.value = '';
+                tagsInput.value = '';
+                imageInput.value = '';
+
+                alert('Article saved locally. Click "Export Articles" to download articles.json, then upload to GitHub to make it visible to all.');
+                loadArticles();
+            } catch (error) {
+                console.error('Error in saveArticle:', error);
+                alert(`Failed to save article: ${error.message}. Check console for details.`);
+            }
+        }
+
+        function modifyArticle(id) {
+            try {
+                console.log('modifyArticle called with id:', id);
+                const password = prompt('Enter admin password to modify article:');
+                if (!password) {
+                    alert('Please enter a password.');
+                    return;
+                }
+                if (password !== adminPassword) {
+                    alert('Incorrect password.');
+                    return;
+                }
+
+                // Load articles.json for modification
+                fetchArticles().then(articles => {
+                    const article = articles.find(a => a.id === id);
+                    if (!article) {
+                        alert('Article not found in articles.json. Ensure it exists in the GitHub repository.');
+                        return;
+                    }
+
+                    const formTitle = document.getElementById('form-title');
+                    const editIdInput = document.getElementById('edit-id');
+                    const titleInput = document.getElementById('article-title');
+                    const contentInput = document.getElementById('article-content');
+                    const dateInput = document.getElementById('article-date');
+                    const tagsInput = document.getElementById('article-tags');
+                    const imageInput = document.getElementById('article-image');
+                    const adminForm = document.getElementById('admin-form');
+
+                    if (!formTitle || !editIdInput || !titleInput || !contentInput || !dateInput || !tagsInput || !imageInput || !adminForm) {
+                        throw new Error('One or more form elements are missing.');
+                    }
+
+                    formTitle.textContent = 'Modify Article';
+                    editIdInput.value = article.id;
+                    titleInput.value = article.title;
+                    contentInput.value = article.content;
+                    dateInput.value = article.date;
+                    tagsInput.value = article.tags.join(', ');
+                    imageInput.value = article.image;
+                    adminForm.classList.add('active');
+                    window.scrollTo(0, adminForm.offsetTop);
+                    alert('Modify the article and click "Submit Article", then "Export Articles" to update articles.json.');
+                }).catch(error => {
+                    console.error('Error fetching articles for modify:', error);
+                    alert('Failed to load article for modification. Check console for details.');
+                });
+            } catch (error) {
+                console.error('Error in modifyArticle:', error);
+                alert(`Failed to modify article: ${error.message}. Check console for details.`);
+            }
+        }
+
+        function deleteArticle(id) {
+            try {
+                console.log('deleteArticle called with id:', id);
+                const password = prompt('Enter admin password to delete article:');
+                if (!password) {
+                    alert('Please enter a password.');
+                    return;
+                }
+                if (password !== adminPassword) {
+                    alert('Incorrect password.');
+                    return;
+                }
+
+                let articles;
+                try {
+                    articles = JSON.parse(localStorage.getItem('articles') || '[]');
+                } catch (e) {
+                    console.error('Error parsing localStorage articles:', e);
+                    articles = [];
+                }
+
+                const articleIndex = articles.findIndex(article => article.id === id);
+                if (articleIndex === -1) {
+                    alert('Article not found in local storage. Syncing with articles.json.');
+                    return;
+                }
+
+                articles = articles.filter(article => article.id !== id);
+                try {
+                    localStorage.setItem('articles', JSON.stringify(articles));
+                } catch (e) {
+                    console.error('Error saving to localStorage:', e);
+                    alert('Failed to save to local storage. Try clearing browser data or using another browser.');
+                    return;
+                }
+
+                alert('Article deleted locally. Click "Export Articles" to download articles.json, then upload to GitHub.');
+                loadArticles();
+            } catch (error) {
+                console.error('Error in deleteArticle:', error);
+                alert(`Failed to delete article: ${error.message}. Check console for details.`);
+            }
+        }
+
+        async function loadArticles() {
+            try {
+                console.log('loadArticles called');
+                const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
+                const articles = await fetchArticles();
+
+                const articleList = document.getElementById('article-list');
+                if (!articleList) {
+                    throw new Error('Article list element not found.');
+                }
+                articleList.innerHTML = '';
+                const lang = document.getElementById('lang-switcher')?.value || 'mg';
+
+                if (articles.length === 0) {
+                    articleList.innerHTML = '<div class="col-span-full text-center text-white text-xl">Mbola tsy misy lahatsoratra. / Aucun article pour le moment. / No articles yet.</div>';
+                    return;
+                }
+
+                articles.forEach(article => {
+                    const articleDiv = document.createElement('div');
+                    articleDiv.className = 'glass article-card p-6';
+                    const excerpt = article.content.substring(0, 100).replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
+                    
+                    articleDiv.innerHTML = `
+                        <div class="article-image mb-4 overflow-hidden">
+                            <img src="${article.image}" alt="Article image" class="w-full h-48 object-cover">
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">
+                            <a href
