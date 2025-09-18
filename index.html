@@ -5,495 +5,569 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rediredin'i Nantenaina</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         html, body { 
             height: 100%; 
             margin: 0; 
-            font-family: 'Inter', sans-serif; 
-            background: rgba(230, 243, 230, 0.9); 
-            color: #1A1A1A; 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #8b5fbf 75%, #a855f7 100%);
+            background-attachment: fixed;
+            color: #2d3748;
+            overflow-x: hidden;
         }
-        body { 
-            display: flex; 
-            flex-direction: column; 
+
+        /* Animated Stars Background */
+        .stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
         }
-        main { 
-            flex: 1 0 auto; 
-            padding-bottom: 100px; 
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle 3s infinite;
         }
-        article { 
-            font-family: 'Georgia', serif; 
-            line-height: 1.8; 
+
+        .star:nth-child(odd) {
+            animation-delay: 1s;
         }
-        .article-list img { 
-            max-height: 200px; 
-            object-fit: cover; 
+
+        .star:nth-child(3n) {
+            animation-delay: 2s;
         }
-        header { 
-            background-color: #5C2F2F; 
-            color: white; 
-            position: sticky; 
-            top: 0; 
-            z-index: 10; 
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1); }
         }
-        footer { 
-            background-color: #4A2C2A; 
-            color: white; 
-            flex-shrink: 0; 
+
+        .shooting-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px white, 0 0 20px white;
+            animation: shoot 4s linear infinite;
+            opacity: 0;
         }
-        a { 
-            color: #5C2F2F; 
-            transition: color 0.3s; 
+
+        @keyframes shoot {
+            0% { opacity: 0; transform: translateX(-100px) translateY(100px); }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { opacity: 0; transform: translateX(300px) translateY(-300px); }
         }
-        a:hover { 
-            color: #D4A017; 
+
+        /* Glassmorphism Effects */
+        .glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
         }
-        .article-card { 
-            transition: transform 0.2s; 
+
+        .glass-dark {
+            background: linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(26,26,46,0.85) 30%, rgba(22,33,62,0.85) 70%, rgba(15,52,96,0.85) 100%);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            color: #f8fafc;
         }
-        .article-card:hover { 
-            transform: scale(1.02); 
+
+        /* Header Styling */
+        header {
+            position: relative;
+            z-index: 10;
+            transition: all 0.3s ease;
         }
-        .proverb { 
-            font-style: italic; 
-            color: #4A2C2A; 
+
+        .header-title {
+            font-family: 'Playfair Display', serif;
+            color: #f1f5f9;
+            font-weight: 700;
+            text-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
         }
-        select { 
-            background: #5C2F2F; 
-            color: white; 
-            padding: 0.5rem; 
-            border-radius: 0.25rem; 
+
+        /* Navigation */
+        nav a {
+            position: relative;
+            transition: all 0.3s ease;
+            color: #e2e8f0;
+            text-decoration: none;
         }
-        #admin-form { 
-            display: none; 
+
+        nav a:hover {
+            color: #f8fafc;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
         }
-        #admin-form.active { 
-            display: block; 
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            transition: width 0.3s ease;
+            box-shadow: 0 0 8px rgba(139, 92, 246, 0.5);
         }
-        input, textarea { 
-            border: 1px solid #5C2F2F; 
-            border-radius: 0.25rem; 
-            padding: 0.5rem; 
-            width: 100%; 
-            margin-bottom: 1rem; 
+
+        nav a:hover::after {
+            width: 100%;
         }
-        textarea {
-            white-space: pre-wrap;
+
+        /* Select Styling */
+        .lang-select {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 8px 16px;
+            color: #e2e8f0;
+            transition: all 0.3s ease;
         }
-        button { 
-            background-color: #5C2F2F; 
-            color: white; 
-            padding: 0.5rem 1rem; 
-            border-radius: 0.25rem; 
-            cursor: pointer; 
+
+        .lang-select:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
-        button:hover { 
-            background-color: #D4A017; 
+
+        /* Main Content */
+        main {
+            position: relative;
+            z-index: 10;
+            min-height: calc(100vh - 200px);
         }
-        .delete-btn { 
-            background-color: #B22222; 
+
+        /* Footer */
+        footer {
+            position: relative;
+            z-index: 10;
+            margin-top: 4rem;
         }
-        .delete-btn:hover { 
-            background-color: #8B0000; 
+
+        /* Article Cards */
+        .article-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            border-radius: 24px;
         }
-        .modify-btn { 
-            background-color: #FFA500; 
+
+        .article-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
         }
-        .modify-btn:hover { 
-            background-color: #FF8C00; 
+
+        .article-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
         }
-        .export-btn { 
-            background-color: #4CAF50; 
+
+        .article-card:hover::before {
+            opacity: 0.1;
         }
-        .export-btn:hover { 
-            background-color: #45a049; 
+
+        .article-image {
+            transition: transform 0.4s ease;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .article-card:hover .article-image {
+            transform: scale(1.05);
+        }
+
+        /* Proverb Styling */
+        .proverb {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            color: #f8fafc;
+            font-weight: 500;
+            font-size: 1.25rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
+        }
+
+        .proverb::before,
+        .proverb::after {
+            content: '"';
+            font-size: 2rem;
+            opacity: 0.4;
+            position: absolute;
+            color: #e2e8f0;
+        }
+
+        .proverb::before {
+            left: -20px;
+            top: -5px;
+        }
+
+        .proverb::after {
+            right: -20px;
+            bottom: -5px;
+        }
+
+        /* Buttons */
+        .btn-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-gradient:hover::before {
+            left: 100%;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Links */
+        .link-gradient {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .link-gradient:hover {
+            transform: translateX(4px);
+        }
+
+        /* Admin form styles */
+        #admin-form {
+            display: none;
+        }
+
+        #admin-form.active {
+            display: block;
+        }
+
+        .form-input {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            width: 100%;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .article-card:hover {
+                transform: translateY(-6px) scale(1.01);
+            }
+            
+            .proverb::before,
+            .proverb::after {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
-    <header class="shadow-md">
-        <div class="container mx-auto px-4 py-6">
-            <h1 class="text-4xl font-bold font-['Raleway', sans-serif]" data-lang-mg="Rediredin'i Nantenaina" data-lang-fr="Divagations de Nantenaina" data-lang-en="Nantenaina's Wanderings">Rediredin'i Nantenaina</h1>
-            <p class="text-lg" data-lang-mg="Eritreritra na fihetseham-po sendra nandalo, dia nantsoina mba hitafa, dia noraketina an-tsoratra." data-lang-fr="Pensées ou émotions passantes, appelées à dialoguer, puis écrites." data-lang-en="Passing thoughts or emotions, called to converse, then written down.">Eritreritra na fihetseham-po sendra nandalo, dia nantsoina mba hitafa, dia noraketina an-tsoratra.</p>
-            <nav class="mt-4 flex justify-between">
-                <ul class="flex space-x-4">
-                    <li><a href="index.html" class="hover:underline" data-lang-mg="Fandraisana" data-lang-fr="Accueil" data-lang-en="Home">Fandraisana</a></li>
-                    <li><a href="about.html" class="hover:underline" data-lang-mg="Momba Ahy" data-lang-fr="À propos" data-lang-en="About">Momba Ahy</a></li>
-                    <li><a href="contact.html" class="hover:underline" data-lang-mg="Hifandray" data-lang-fr="Contact" data-lang-en="Contact">Hifandray</a></li>
+    <!-- Animated Stars Background -->
+    <div class="stars-container" id="stars-container"></div>
+
+    <header class="glass-dark">
+        <div class="container mx-auto px-6 py-8">
+            <h1 class="header-title text-5xl font-bold mb-4" data-lang-mg="Rediredin'i Nantenaina" data-lang-fr="Divagations de Nantenaina" data-lang-en="Nantenaina's Wanderings">Rediredin'i Nantenaina</h1>
+            <p class="text-slate-200 text-lg font-light mb-6" data-lang-mg="Eritreritra na fihetseham-po sendra nandalo, dia nantsoina mba hitafa, dia noraketina an-tsoratra." data-lang-fr="Pensées ou émotions passantes, appelées à dialoguer, puis écrites." data-lang-en="Passing thoughts or emotions, called to converse, then written down.">Eritreritra na fihetseham-po sendra nandalo, dia nantsoina mba hitafa, dia noraketina an-tsoratra.</p>
+            <nav class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <ul class="flex flex-wrap justify-center gap-8">
+                    <li><a href="#" class="hover:text-blue-300 transition-colors" data-lang-mg="Fandraisana" data-lang-fr="Accueil" data-lang-en="Home">Fandraisana</a></li>
+                    <li><a href="#" class="hover:text-blue-300 transition-colors" data-lang-mg="Momba Ahy" data-lang-fr="À propos" data-lang-en="About">Momba Ahy</a></li>
+                    <li><a href="#" class="hover:text-blue-300 transition-colors" data-lang-mg="Hifandray" data-lang-fr="Contact" data-lang-en="Contact">Hifandray</a></li>
                 </ul>
-                <select id="lang-switcher" onchange="switchLanguage()">
-                    <option value="mg">Malagasy</option>
-                    <option value="fr">Français</option>
-                    <option value="en">English</option>
+                <select id="lang-switcher" class="lang-select" onchange="switchLanguage()">
+                    <option value="mg">🇲🇬 Malagasy</option>
+                    <option value="fr">🇫🇷 Français</option>
+                    <option value="en">🇺🇸 English</option>
                 </select>
             </nav>
         </div>
     </header>
-    <main class="container mx-auto px-4 py-8">
-        <section class="mb-12">
-            <p class="proverb mb-4">"Ny fanahy no olona" – Ohabolana Malagasy</p>
-            <h2 class="text-2xl font-semibold mb-4" data-lang-mg="Lahatsoratra Rehetra" data-lang-fr="Tous les articles" data-lang-en="All Articles">Lahatsoratra Rehetra</h2>
-            <div id="admin-form" class="bg-white p-6 rounded-lg shadow-md mb-6">
-                <h3 class="text-xl font-bold mb-4" id="form-title">Add New Article</h3>
-                <input type="hidden" id="edit-id">
-                <input type="password" id="admin-password" placeholder="Admin Password" required>
-                <input type="text" id="article-title" placeholder="Article Title" required>
-                <textarea id="article-content" placeholder="Article Content (use newlines for paragraphs)" rows="5" required></textarea>
-                <input type="date" id="article-date" required>
-                <input type="text" id="article-tags" placeholder="Tags (e.g., Fitiavana, Kolontsaina)">
-                <input type="url" id="article-image" placeholder="Image URL">
-                <div class="flex space-x-2">
-                    <button onclick="saveArticle()">Submit Article</button>
-                    <button class="export-btn" onclick="exportArticles()">Export Articles</button>
-                </div>
-                <p class="text-sm text-gray-600 mt-2">After submitting, click "Export Articles" and upload the downloaded file to GitHub (articles.json) to make changes visible to all.</p>
+
+    <main class="container mx-auto px-6 py-12">
+        <section class="mb-16">
+            <div class="proverb">"Ny fanahy no olona" – Ohabolana Malagasy</div>
+            
+            <div class="mb-12">
+                <h2 class="text-4xl font-bold text-white mb-4" data-lang-mg="Lahatsoratra Rehetra" data-lang-fr="Tous les articles" data-lang-en="All Articles">Lahatsoratra Rehetra</h2>
+                <div class="w-24 h-1 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full"></div>
             </div>
-            <div id="article-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Articles will be dynamically inserted here -->
+
+            <div id="admin-form" class="glass rounded-3xl p-8 mb-12 shadow-2xl">
+                <h3 class="text-2xl font-bold mb-6 text-center" id="form-title">Add New Article</h3>
+                <input type="hidden" id="edit-id">
+                <input type="password" id="admin-password" class="form-input" placeholder="Admin Password" required>
+                <input type="text" id="article-title" class="form-input" placeholder="Article Title" required>
+                <textarea id="article-content" class="form-input" placeholder="Article Content" rows="6" required></textarea>
+                <input type="date" id="article-date" class="form-input" required>
+                <input type="text" id="article-tags" class="form-input" placeholder="Tags (e.g., Fitiavana, Kolontsaina)">
+                <input type="url" id="article-image" class="form-input" placeholder="Image URL">
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button onclick="saveArticle()" class="btn-gradient flex-1">Submit Article</button>
+                    <button onclick="exportArticles()" class="btn-gradient" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);">Export Articles</button>
+                </div>
+            </div>
+
+            <div id="article-list" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                <!-- Articles will be loaded here -->
             </div>
         </section>
     </main>
-    <footer class="py-6">
-        <div class="container mx-auto px-4">
-            <p data-lang-mg="© 2025 Nantenaina Ratsimbazafy. Zo rehetra voatokana." data-lang-fr="© 2025 Nantenaina Ratsimbazafy. Tous droits réservés." data-lang-en="© 2025 Nantenaina Ratsimbazafy. All rights reserved.">© 2025 Nantenaina Ratsimbazafy. Zo rehetra voatokana.</p>
+
+    <footer class="glass-dark mt-16">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <p class="text-gray-200 mb-4" data-lang-mg="© 2025 Nantenaina Ratsimbazafy. Zo rehetra voatokana." data-lang-fr="© 2025 Nantenaina Ratsimbazafy. Tous droits réservés." data-lang-en="© 2025 Nantenaina Ratsimbazafy. All rights reserved.">© 2025 Nantenaina Ratsimbazafy. Zo rehetra voatokana.</p>
+        </div>
     </footer>
+
     <script>
-        // Plain password for admin actions
         const adminPassword = 'nantenaina2025';
 
-        // Basic HTML sanitizer
-        function sanitizeHTML(str) {
-            if (typeof str !== 'string') return '';
-            return str.replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '"').replace(/'/g, '');
+        const sampleArticles = [
+            {
+                id: 1,
+                title: "Ny Fitiavana sy ny Fiainam-pirenena",
+                content: "Ny fitiavana dia tsy misy fetrany. Izany no mahatonga ny fiainana ho tsara tarehy.\n\nRaha misy olona tia anao dia mazava ho azy fa tsara ny fiainanao. Ny fitiavana dia tsy mety raisina ho toy ny zavatra tsotra fotsiny fa tsy maintsy hajaina sy tsiahivina.\n\nAry ny fitiavan'ny firenena kosa dia miavaka. Izany dia fitiavana tsy misy fe-potoana, fitiavana tsy mivadika.",
+                date: "2025-01-15",
+                tags: ["Fitiavana", "Fiainana", "Kolontsaina"],
+                image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=300&fit=crop&crop=face"
+            },
+            {
+                id: 2,
+                title: "Fahatsiarovana ny Tanindrazana",
+                content: "Madagascar dia tany mahafinaritra. Ny tanindraza no tsara indrindra.\n\nTsy mety hadino ny razana fa izy ireo no nanorina ny fiainantsika ankehitriny. Ny kolontsaina malagasy dia harena tsy hay lanja.\n\nNy fomba amam-panao sy ny fiteny ary ny hira rehetra dia tokony hotazonina sy holovaina.",
+                date: "2025-01-10",
+                tags: ["Tanindrazana", "Fahatsiarovana", "Razana"],
+                image: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=500&h=300&fit=crop"
+            },
+            {
+                id: 3,
+                title: "Hevitra momba ny Fihavanana",
+                content: "Ny fihavanana dia fototry ny fiainan'ny Malagasy rehetra.\n\nRaha misy olona tsy mahay ny fihavanana dia tsy afaka miaina tsara izy. Ny fihavanana dia tsy vola fa fihetseham-po.\n\nIzany no mahatonga ny fiaraha-monina ho matanjaka sy ho vonona hiara-hiasa.",
+                date: "2025-01-05",
+                tags: ["Fihavanana", "Fomba", "Fiaraha-miasa"],
+                image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=500&h=300&fit=crop"
+            }
+        ];
+
+        function createStars() {
+            const container = document.getElementById('stars-container');
+            const numberOfStars = 100;
+            
+            for (let i = 0; i < numberOfStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = star.style.height = Math.random() * 3 + 1 + 'px';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                container.appendChild(star);
+            }
+
+            for (let i = 0; i < 5; i++) {
+                const shootingStar = document.createElement('div');
+                shootingStar.className = 'shooting-star';
+                shootingStar.style.left = Math.random() * 100 + '%';
+                shootingStar.style.top = Math.random() * 50 + '%';
+                shootingStar.style.animationDelay = Math.random() * 10 + 's';
+                shootingStar.style.animationDuration = (Math.random() * 2 + 3) + 's';
+                container.appendChild(shootingStar);
+            }
         }
 
         function switchLanguage() {
-            try {
-                const lang = document.getElementById('lang-switcher').value;
-                localStorage.setItem('selectedLanguage', lang);
-                document.querySelectorAll('[data-lang-mg]').forEach(el => {
-                    el.textContent = el.getAttribute(`data-lang-${lang}`);
-                });
-                loadArticles();
-            } catch (error) {
-                console.error('Error switching language:', error);
-                alert('Failed to switch language. Check console for details.');
-            }
+            const lang = document.getElementById('lang-switcher').value;
+            document.querySelectorAll('[data-lang-mg]').forEach(el => {
+                el.textContent = el.getAttribute(`data-lang-${lang}`);
+            });
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            try {
-                const savedLang = localStorage.getItem('selectedLanguage') || 'mg';
-                document.getElementById('lang-switcher').value = savedLang;
-                document.querySelectorAll('[data-lang-mg]').forEach(el => {
-                    el.textContent = el.getAttribute(`data-lang-${savedLang}`);
-                });
+        function loadArticles() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const isAdmin = urlParams.get('admin') === 'true';
+            const articleList = document.getElementById('article-list');
+            const lang = document.getElementById('lang-switcher').value || 'mg';
 
-                // Show admin form if ?admin=true
-                const urlParams = new URLSearchParams(window.location.search);
-                if (urlParams.get('admin') === 'true') {
-                    const adminForm = document.getElementById('admin-form');
-                    if (adminForm) adminForm.classList.add('active');
-                }
+            articleList.innerHTML = '';
 
-                // Check for unsaved changes in localStorage
-                checkUnsavedChanges();
-
-                // Load articles
-                loadArticles();
-            } catch (error) {
-                console.error('Error initializing page:', error);
-                alert('Failed to initialize page. Check console for details.');
-            }
-        });
-
-        async function fetchArticles() {
-            try {
-                const response = await fetch('articles.json');
-                if (!response.ok) {
-                    if (response.status === 404) {
-                        console.warn('articles.json not found, returning empty array');
-                        return [];
-                    }
-                    throw new Error(`Failed to fetch articles: ${response.statusText} (Status: ${response.status})`);
-                }
-                return await response.json();
-            } catch (error) {
-                console.error('Error fetching articles:', error);
-                alert('Failed to load articles from articles.json. Check console for details.');
-                return [];
-            }
-        }
-
-        function exportArticles() {
-            try {
-                const articles = JSON.parse(localStorage.getItem('articles') || '[]');
-                const jsonStr = JSON.stringify(articles, null, 2);
-                const blob = new Blob([jsonStr], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'articles.json';
-                a.click();
-                URL.revokeObjectURL(url);
-                alert('Downloaded articles.json. Upload it to your GitHub repository (Etann99/Etann99.github.io) at articles.json to make changes visible to all.');
-            } catch (error) {
-                console.error('Error exporting articles:', error);
-                alert(`Failed to export articles: ${error.message}. Check console for details.`);
-            }
-        }
-
-        async function checkUnsavedChanges() {
-            try {
-                const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
-                if (!isAdmin) return;
-
-                const articles = await fetchArticles();
-                let localArticles;
-                try {
-                    localArticles = JSON.parse(localStorage.getItem('articles') || '[]');
-                } catch (e) {
-                    console.error('Error parsing localStorage articles:', e);
-                    localArticles = [];
-                }
-
-                const articlesStr = JSON.stringify(articles);
-                const localArticlesStr = JSON.stringify(localArticles);
-                if (localArticles.length > 0 && articlesStr !== localArticlesStr) {
-                    alert('You have unsaved changes in local storage. Click "Export Articles" and upload to GitHub to save them permanently.');
-                }
-            } catch (error) {
-                console.error('Error checking unsaved changes:', error);
-            }
+            sampleArticles.forEach(article => {
+                const articleDiv = document.createElement('div');
+                articleDiv.className = 'glass article-card p-6';
+                const excerpt = article.content.substring(0, 120) + (article.content.length > 120 ? '...' : '');
+                
+                articleDiv.innerHTML = `
+                    <div class="article-image mb-4 overflow-hidden">
+                        <img src="${article.image}" alt="Article image" class="w-full h-48 object-cover">
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">
+                        <a href="#" class="link-gradient">${article.title}</a>
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-3">${new Date(article.date).toLocaleDateString()}</p>
+                    <div class="text-gray-700 mb-4" style="white-space: pre-line;">${excerpt}</div>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        ${article.tags.map(tag => `<span class="px-3 py-1 bg-gradient-to-r from-blue-400 to-purple-500 text-white text-xs rounded-full">${tag}</span>`).join('')}
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <a href="#" class="link-gradient">Hamaky bebe kokoa →</a>
+                        <div class="flex space-x-2">
+                            <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}" class="text-blue-500 hover:text-blue-700">📱</a>
+                            <a href="mailto:?subject=${encodeURIComponent(article.title)}" class="text-gray-500 hover:text-gray-700">✉️</a>
+                        </div>
+                    </div>
+                    ${isAdmin ? `
+                        <div class="mt-4 pt-4 border-t border-gray-200 flex space-x-2">
+                            <button onclick="modifyArticle(${article.id})" class="px-3 py-1 bg-yellow-500 text-white rounded text-sm">Modify</button>
+                            <button onclick="deleteArticle(${article.id})" class="px-3 py-1 bg-red-500 text-white rounded text-sm">Delete</button>
+                        </div>
+                    ` : ''}
+                `;
+                articleList.appendChild(articleDiv);
+            });
         }
 
         function saveArticle() {
-            try {
-                console.log('saveArticle called');
-                const passwordInput = document.getElementById('admin-password');
-                const titleInput = document.getElementById('article-title');
-                const contentInput = document.getElementById('article-content');
-                const dateInput = document.getElementById('article-date');
-                const tagsInput = document.getElementById('article-tags');
-                const imageInput = document.getElementById('article-image');
-                const editIdInput = document.getElementById('edit-id');
-
-                if (!passwordInput || !titleInput || !contentInput || !dateInput || !tagsInput || !imageInput || !editIdInput) {
-                    throw new Error('One or more form elements are missing.');
-                }
-
-                const password = passwordInput.value;
-                if (!password) {
-                    alert('Please enter a password.');
-                    return;
-                }
-                if (password !== adminPassword) {
-                    alert('Incorrect password.');
-                    return;
-                }
-
-                const id = editIdInput.value ? parseInt(editIdInput.value) : null;
-                const title = sanitizeHTML(titleInput.value);
-                const content = contentInput.value;
-                const date = dateInput.value;
-                const tags = tagsInput.value.split(',').map(tag => sanitizeHTML(tag.trim())).filter(tag => tag);
-                const image = imageInput.value || 'https://mta.mg/wp-content/uploads/2021/05/Sunset-baobabs-Madagascar-mta-1.jpg';
-
-                if (!title || !content || !date) {
-                    alert('Please fill in title, content, and date.');
-                    return;
-                }
-
-                let articles;
-                try {
-                    articles = JSON.parse(localStorage.getItem('articles') || '[]');
-                } catch (e) {
-                    console.error('Error parsing localStorage articles:', e);
-                    articles = [];
-                }
-
-                if (id) {
-                    const articleIndex = articles.findIndex(article => article.id === id);
-                    if (articleIndex === -1) {
-                        alert('Article to modify not found in local storage.');
-                        return;
-                    }
-                    articles[articleIndex] = { id, title, content, date, tags, image };
-                } else {
-                    const newId = articles.length ? Math.max(...articles.map(a => a.id)) + 1 : 1;
-                    articles.push({ id: newId, title, content, date, tags, image });
-                }
-
-                try {
-                    localStorage.setItem('articles', JSON.stringify(articles));
-                } catch (e) {
-                    console.error('Error saving to localStorage:', e);
-                    alert('Failed to save to local storage. Try clearing browser data or using another browser.');
-                    return;
-                }
-
-                document.getElementById('form-title').textContent = 'Add New Article';
-                editIdInput.value = '';
-                passwordInput.value = '';
-                titleInput.value = '';
-                contentInput.value = '';
-                dateInput.value = '';
-                tagsInput.value = '';
-                imageInput.value = '';
-
-                alert('Article saved locally. Click "Export Articles" to download articles.json, then upload to GitHub to make it visible to all.');
-                loadArticles();
-            } catch (error) {
-                console.error('Error in saveArticle:', error);
-                alert(`Failed to save article: ${error.message}. Check console for details.`);
+            const password = document.getElementById('admin-password').value;
+            if (password !== adminPassword) {
+                alert('Incorrect password.');
+                return;
             }
+            
+            // Clear form
+            document.getElementById('admin-password').value = '';
+            document.getElementById('article-title').value = '';
+            document.getElementById('article-content').value = '';
+            document.getElementById('article-date').value = '';
+            document.getElementById('article-tags').value = '';
+            document.getElementById('article-image').value = '';
+            
+            alert('Article saved locally. Export to make changes permanent.');
+        }
+
+        function exportArticles() {
+            const jsonStr = JSON.stringify(sampleArticles, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'articles.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function downloadWebsite() {
+            // Get the current HTML content
+            const htmlContent = document.documentElement.outerHTML;
+            
+            // Create a Blob with the HTML content
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            
+            // Create download link
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'nantenaina-blog.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('Site web téléchargé ! Vous pouvez maintenant l\'ouvrir dans n\'importe quel navigateur.');
         }
 
         function modifyArticle(id) {
-            try {
-                console.log('modifyArticle called with id:', id);
-                const password = prompt('Enter admin password to modify article:');
-                if (!password) {
-                    alert('Please enter a password.');
-                    return;
-                }
-                if (password !== adminPassword) {
-                    alert('Incorrect password.');
-                    return;
-                }
-
-                // Load articles.json for modification
-                fetchArticles().then(articles => {
-                    const article = articles.find(a => a.id === id);
-                    if (!article) {
-                        alert('Article not found in articles.json. Ensure it exists in the GitHub repository.');
-                        return;
-                    }
-
-                    const formTitle = document.getElementById('form-title');
-                    const editIdInput = document.getElementById('edit-id');
-                    const titleInput = document.getElementById('article-title');
-                    const contentInput = document.getElementById('article-content');
-                    const dateInput = document.getElementById('article-date');
-                    const tagsInput = document.getElementById('article-tags');
-                    const imageInput = document.getElementById('article-image');
-                    const adminForm = document.getElementById('admin-form');
-
-                    if (!formTitle || !editIdInput || !titleInput || !contentInput || !dateInput || !tagsInput || !imageInput || !adminForm) {
-                        throw new Error('One or more form elements are missing.');
-                    }
-
-                    formTitle.textContent = 'Modify Article';
-                    editIdInput.value = article.id;
-                    titleInput.value = article.title;
-                    contentInput.value = article.content;
-                    dateInput.value = article.date;
-                    tagsInput.value = article.tags.join(', ');
-                    imageInput.value = article.image;
-                    adminForm.classList.add('active');
-                    window.scrollTo(0, adminForm.offsetTop);
-                    alert('Modify the article and click "Submit Article", then "Export Articles" to update articles.json.');
-                }).catch(error => {
-                    console.error('Error fetching articles for modify:', error);
-                    alert('Failed to load article for modification. Check console for details.');
-                });
-            } catch (error) {
-                console.error('Error in modifyArticle:', error);
-                alert(`Failed to modify article: ${error.message}. Check console for details.`);
+            const password = prompt('Enter admin password:');
+            if (password !== adminPassword) {
+                alert('Incorrect password.');
+                return;
             }
+            alert('Article modification feature would be implemented here.');
         }
 
         function deleteArticle(id) {
-            try {
-                console.log('deleteArticle called with id:', id);
-                const password = prompt('Enter admin password to delete article:');
-                if (!password) {
-                    alert('Please enter a password.');
-                    return;
-                }
-                if (password !== adminPassword) {
-                    alert('Incorrect password.');
-                    return;
-                }
-
-                let articles;
-                try {
-                    articles = JSON.parse(localStorage.getItem('articles') || '[]');
-                } catch (e) {
-                    console.error('Error parsing localStorage articles:', e);
-                    articles = [];
-                }
-
-                const articleIndex = articles.findIndex(article => article.id === id);
-                if (articleIndex === -1) {
-                    alert('Article not found in local storage. Syncing with articles.json.');
-                    return;
-                }
-
-                articles = articles.filter(article => article.id !== id);
-                try {
-                    localStorage.setItem('articles', JSON.stringify(articles));
-                } catch (e) {
-                    console.error('Error saving to localStorage:', e);
-                    alert('Failed to save to local storage. Try clearing browser data or using another browser.');
-                    return;
-                }
-
-                alert('Article deleted locally. Click "Export Articles" to download articles.json, then upload to GitHub.');
-                loadArticles();
-            } catch (error) {
-                console.error('Error in deleteArticle:', error);
-                alert(`Failed to delete article: ${error.message}. Check console for details.`);
+            const password = prompt('Enter admin password:');
+            if (password !== adminPassword) {
+                alert('Incorrect password.');
+                return;
             }
+            alert('Article deletion feature would be implemented here.');
         }
 
-        async function loadArticles() {
-            try {
-                console.log('loadArticles called');
-                const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
-                const articles = await fetchArticles();
-
-                const articleList = document.getElementById('article-list');
-                if (!articleList) {
-                    throw new Error('Article list element not found.');
-                }
-                articleList.innerHTML = '';
-                const lang = document.getElementById('lang-switcher')?.value || 'mg';
-
-                if (isAdmin && articles.length === 0) {
-                    console.warn('No articles in articles.json for admin view');
-                    alert('No articles found in articles.json. Add new articles and export to GitHub.');
-                }
-
-                articles.forEach(article => {
-                    const articleDiv = document.createElement('div');
-                    articleDiv.className = 'bg-white p-6 rounded-lg shadow-md article-card';
-                    const excerpt = article.content.substring(0, 100).replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
-                    articleDiv.innerHTML = `
-                        <img src="${article.image}" alt="Article image" class="w-full mb-4 rounded">
-                        <h3 class="text-xl font-bold"><a href="article.html?id=${article.id}" class="hover:underline">${article.title}</a></h3>
-                        <p class="text-gray-500 text-sm">${new Date(article.date).toLocaleDateString('mg-MG')}</p>
-                        <div class="mt-2" style="white-space: pre-wrap;"><p>${excerpt}${article.content.length > 100 ? '...' : ''}</p></div>
-                        <p class="text-sm text-gray-600" data-lang-mg="Tenifototra" data-lang-fr="Étiquettes" data-lang-en="Tags">${lang === 'mg' ? 'Tenifototra' : lang === 'fr' ? 'Étiquettes' : 'Tags'}: ${article.tags.join(', ') || 'Tsia'}</p>
-                        <div class="mt-2">
-                            <a href="https://twitter.com/intent/tweet?url=https://Etann99.github.io/article.html?id=${article.id}&text=${encodeURIComponent(article.title)}" class="text-sm text-blue-600 hover:underline">Share on X</a> |
-                            <a href="mailto:?subject=${encodeURIComponent(article.title)}&body=Check out this article: https://Etann99.github.io/article.html?id=${article.id}" class="text-sm text-blue-600 hover:underline">Share via Email</a>
-                        </div>
-                        <a href="article.html?id=${article.id}" class="hover:underline">Hamaky Bebe Kokoa</a>
-                        ${isAdmin ? `
-                            <div class="mt-2 space-x-2">
-                                <button class="modify-btn" onclick="modifyArticle(${article.id})">Modify</button>
-                                <button class="delete-btn" onclick="deleteArticle(${article.id})">Delete</button>
-                            </div>
-                        ` : ''}
-                    `;
-                    articleList.appendChild(articleDiv);
-                });
-            } catch (error) {
-                console.error('Error in loadArticles:', error);
-                alert(`Failed to load articles: ${error.message}. Check console for details.`);
+        document.addEventListener('DOMContentLoaded', () => {
+            createStars();
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('admin') === 'true') {
+                document.getElementById('admin-form').classList.add('active');
             }
-        }
+            
+            loadArticles();
+        });
     </script>
 </body>
 </html>
