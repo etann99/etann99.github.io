@@ -5,100 +5,306 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Momba Ahy - Rediredin'i Nantenaina</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         html, body { 
             height: 100%; 
             margin: 0; 
-            font-family: 'Inter', sans-serif; 
-            background: rgba(230, 243, 230, 0.9); 
-            color: #1A1A1A; 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #8b5fbf 75%, #a855f7 100%);
+            background-attachment: fixed;
+            color: #f8fafc;
+            overflow-x: hidden;
         }
+
         body { 
             display: flex; 
             flex-direction: column; 
         }
+
+        /* Animated Stars Background */
+        .stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle 3s infinite;
+        }
+
+        .star:nth-child(odd) {
+            animation-delay: 1s;
+        }
+
+        .star:nth-child(3n) {
+            animation-delay: 2s;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        .shooting-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px white, 0 0 20px white;
+            animation: shoot 4s linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes shoot {
+            0% { opacity: 0; transform: translateX(-100px) translateY(100px); }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { opacity: 0; transform: translateX(300px) translateY(-300px); }
+        }
+
+        /* Glassmorphism Effects */
+        .glass-dark {
+            background: linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(26,26,46,0.85) 30%, rgba(22,33,62,0.85) 70%, rgba(15,52,96,0.85) 100%);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            color: #f8fafc;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border-radius: 24px;
+            color: #f8fafc;
+        }
+
+        /* Header Styling */
+        header {
+            position: relative;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .header-title {
+            font-family: 'Playfair Display', serif;
+            color: #f1f5f9;
+            font-weight: 700;
+            text-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+        }
+
+        /* Navigation */
+        nav a {
+            position: relative;
+            transition: all 0.3s ease;
+            color: #e2e8f0;
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: #f8fafc;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            transition: width 0.3s ease;
+            box-shadow: 0 0 8px rgba(139, 92, 246, 0.5);
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Select Styling */
+        .lang-select {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 8px 16px;
+            color: #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .lang-select:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Main Content */
         main { 
             flex: 1 0 auto; 
-            padding-bottom: 100px; 
+            padding-bottom: 100px;
+            position: relative;
+            z-index: 10;
         }
+
+        /* Article Styling */
         article { 
-            font-family: 'Georgia', serif; 
+            font-family: 'Inter', sans-serif; 
             line-height: 1.8; 
             max-width: 800px; 
-            margin: auto; 
+            margin: auto;
         }
-        header { 
-            background-color: #5C2F2F; 
-            color: white; 
-            position: sticky; 
-            top: 0; 
-            z-index: 10; 
+
+        .about-content {
+            padding: 3rem;
+            margin-bottom: 2rem;
         }
+
+        .about-title {
+            font-family: 'Playfair Display', serif;
+            color: #f1f5f9;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .about-text {
+            color: #f1f5f9;
+            font-size: 1.125rem;
+            line-height: 1.8;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Footer */
         footer { 
-            background-color: #4A2C2A; 
-            color: white; 
-            flex-shrink: 0; 
+            flex-shrink: 0;
+            position: relative;
+            z-index: 10;
         }
-        a { 
-            color: #5C2F2F; 
-            transition: color 0.3s; 
-        }
-        a:hover { 
-            color: #D4A017; 
-        }
-        select { 
-            background: #5C2F2F; 
-            color: white; 
-            padding: 0.5rem; 
-            border-radius: 0.25rem; 
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .about-content {
+                padding: 2rem;
+            }
+            
+            .about-text {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
-    <header class="shadow-md">
-        <div class="container mx-auto px-4 py-6">
-            <h1 class="text-4xl font-bold font-['Raleway', sans-serif]" data-lang-mg="Rediredin'i Nantenaina" data-lang-fr="Divagations de Nantenaina" data-lang-en="Nantenaina's Wanderings">Rediredin'i Nantenaina</h1>
-            <p class="text-lg" data-lang-mg="Eritreritra na fihetseham-po sendra nandalo, dia nantsoina mba hitafa, dia noraketina an-tsoratra." data-lang-fr="Pensées ou émotions passantes, appelées à dialoguer, puis écrites." data-lang-en="Passing thoughts or emotions, called to converse, then written down.">Eritreritra na fihetseham-po sendra nandalo, dia nantsoina mba hitafa, dia noraketina an-tsoratra.</p>
-            <nav class="mt-4 flex justify-between">
-                <ul class="flex space-x-4">
-                    <li><a href="index.html" class="hover:underline" data-lang-mg="Fandraisana" data-lang-fr="Accueil" data-lang-en="Home">Fandraisana</a></li>
-                    <li><a href="about.html" class="hover:underline" data-lang-mg="Momba Ahy" data-lang-fr="À propos" data-lang-en="About">Momba Ahy</a></li>
-                    <li><a href="contact.html" class="hover:underline" data-lang-mg="Hifandray" data-lang-fr="Contact" data-lang-en="Contact">Hifandray</a></li>
+    <!-- Animated Stars Background -->
+    <div class="stars-container" id="stars-container"></div>
+
+    <header class="glass-dark">
+        <div class="container mx-auto px-6 py-8">
+            <h1 class="header-title text-5xl font-bold mb-4" data-lang-mg="Rediredin'i Nantenaina" data-lang-fr="Divagations de Nantenaina" data-lang-en="Nantenaina's Wanderings">Rediredin'i Nantenaina</h1>
+            <p class="text-slate-200 text-lg font-light mb-6" data-lang-mg="Eritreritra na fihetseham-po sendra nandalo, dia nantsoina mba hitafa, dia noraketina an-tsoratra." data-lang-fr="Pensées ou émotions passantes, appelées à dialoguer, puis écrites." data-lang-en="Passing thoughts or emotions, called to converse, then written down.">Eritreritra na fihetseham-po sendra nandalo, dia nantsoina mba hitafa, dia noraketina an-tsoratra.</p>
+            <nav class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <ul class="flex flex-wrap justify-center gap-8">
+                    <li><a href="index.html" class="hover:text-blue-300 transition-colors" data-lang-mg="Fandraisana" data-lang-fr="Accueil" data-lang-en="Home">Fandraisana</a></li>
+                    <li><a href="about.html" class="hover:text-blue-300 transition-colors" data-lang-mg="Momba Ahy" data-lang-fr="À propos" data-lang-en="About">Momba Ahy</a></li>
+                    <li><a href="contact.html" class="hover:text-blue-300 transition-colors" data-lang-mg="Hifandray" data-lang-fr="Contact" data-lang-en="Contact">Hifandray</a></li>
                 </ul>
-                <select id="lang-switcher" onchange="switchLanguage()">
-                    <option value="mg">Malagasy</option>
-                    <option value="fr">Français</option>
-                    <option value="en">English</option>
+                <select id="lang-switcher" class="lang-select" onchange="switchLanguage()">
+                    <option value="mg">🇲🇬 Malagasy</option>
+                    <option value="fr">🇫🇷 Français</option>
+                    <option value="en">🇺🇸 English</option>
                 </select>
             </nav>
         </div>
     </header>
-    <main class="container mx-auto px-4 py-8">
-        <article>
-            <h2 class="text-2xl font-semibold mb-4" data-lang-mg="Momba Ahy" data-lang-fr="À propos" data-lang-en="About">Momba Ahy</h2>
-            <p data-lang-mg="Nantenaina Ratsimbazafy no anarako, tanora somary lasa saina alavitra loatra, dia mba te hizara ny toerana voatetin’ny dian’ny saiko." data-lang-fr="Je m'appelle Nantenaina Ratsimbazafy, un jeune dont l'esprit s'égare parfois trop loin, et je souhaite partager les recoins explorés par les ailes de mon imagination." data-lang-en="My name is Nantenaina Ratsimbazafy, a young person whose mind wanders far, eager to share the places my imagination's wings have touched.">Nantenaina Ratsimbazafy no anarako, tanora somary lasa saina alavitra loatra, dia mba te hizara ny toerana voatetin’ny dia’ny saiko.</p>
-        </article>
+
+    <main class="container mx-auto px-6 py-12">
+        <div class="glass about-content">
+            <article>
+                <h2 class="about-title text-3xl" data-lang-mg="Momba Ahy" data-lang-fr="À propos" data-lang-en="About">Momba Ahy</h2>
+                <p class="about-text" data-lang-mg="Nantenaina Ratsimbazafy no anarako, tanora somary lasa saina alavitra loatra, dia mba te hizara ny toerana voatetin'ny dian'ny saiko." data-lang-fr="Je m'appelle Nantenaina Ratsimbazafy, un jeune dont l'esprit s'égare parfois trop loin, et je souhaite partager les recoins explorés par les ailes de mon imagination." data-lang-en="My name is Nantenaina Ratsimbazafy, a young person whose mind wanders far, eager to share the places my imagination's wings have touched.">Nantenaina Ratsimbazafy no anarako, tanora somary lasa saina alavitra loatra, dia mba te hizara ny toerana voatetin'ny dian'ny saiko.</p>
+            </article>
+        </div>
     </main>
-    <footer class="py-6">
-        <div class="container mx-auto px-4">
-            <p data-lang-mg="© 2025 Nantenaina Ratsimbazafy. Zo rehetra voatokana." data-lang-fr="© 2025 Nantenaina Ratsimbazafy. Tous droits réservés." data-lang-en="© 2025 Nantenaina Ratsimbazafy. All rights reserved.">© 2025 Nantenaina Ratsimbazafy. Zo rehetra voatokana.</p>
+
+    <footer class="glass-dark mt-16">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <p class="text-gray-200" data-lang-mg="© 2025 Nantenaina Ratsimbazafy. Zo rehetra voatokana." data-lang-fr="© 2025 Nantenaina Ratsimbazafy. Tous droits réservés." data-lang-en="© 2025 Nantenaina Ratsimbazafy. All rights reserved.">© 2025 Nantenaina Ratsimbazafy. Zo rehetra voatokana.</p>
         </div>
     </footer>
+
     <script>
+        // Create animated stars
+        function createStars() {
+            const container = document.getElementById('stars-container');
+            const numberOfStars = 100;
+            
+            for (let i = 0; i < numberOfStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = star.style.height = Math.random() * 3 + 1 + 'px';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                container.appendChild(star);
+            }
+
+            for (let i = 0; i < 5; i++) {
+                const shootingStar = document.createElement('div');
+                shootingStar.className = 'shooting-star';
+                shootingStar.style.left = Math.random() * 100 + '%';
+                shootingStar.style.top = Math.random() * 50 + '%';
+                shootingStar.style.animationDelay = Math.random() * 10 + 's';
+                shootingStar.style.animationDuration = (Math.random() * 2 + 3) + 's';
+                container.appendChild(shootingStar);
+            }
+        }
+
         function switchLanguage() {
-            const lang = document.getElementById('lang-switcher').value;
-            localStorage.setItem('selectedLanguage', lang);
-            document.querySelectorAll('[data-lang-mg]').forEach(el => {
-                el.textContent = el.getAttribute(`data-lang-${lang}`);
-            });
+            try {
+                const lang = document.getElementById('lang-switcher').value;
+                try {
+                    localStorage.setItem('selectedLanguage', lang);
+                } catch(e) {
+                    console.warn('localStorage not available');
+                }
+                document.querySelectorAll('[data-lang-mg]').forEach(el => {
+                    el.textContent = el.getAttribute(`data-lang-${lang}`);
+                });
+            } catch (error) {
+                console.error('Error switching language:', error);
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const savedLang = localStorage.getItem('selectedLanguage') || 'mg';
-            document.getElementById('lang-switcher').value = savedLang;
-            document.querySelectorAll('[data-lang-mg]').forEach(el => {
-                el.textContent = el.getAttribute(`data-lang-${savedLang}`);
-            });
+            try {
+                createStars();
+                
+                const savedLang = (typeof Storage !== "undefined" && localStorage.getItem('selectedLanguage')) || 'mg';
+                document.getElementById('lang-switcher').value = savedLang;
+                document.querySelectorAll('[data-lang-mg]').forEach(el => {
+                    el.textContent = el.getAttribute(`data-lang-${savedLang}`);
+                });
+            } catch (error) {
+                console.error('Error initializing page:', error);
+            }
         });
     </script>
 </body>
