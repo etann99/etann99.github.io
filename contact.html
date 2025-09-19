@@ -5,103 +5,303 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hifandray - Rediredin'i Nantenaina</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         html, body { 
             height: 100%; 
             margin: 0; 
-            font-family: 'Inter', sans-serif; 
-            background: rgba(230, 243, 230, 0.9); 
-            color: #1A1A1A; 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #8b5fbf 75%, #a855f7 100%);
+            background-attachment: fixed;
+            color: #2d3748;
+            overflow-x: hidden;
         }
-        body { 
-            display: flex; 
-            flex-direction: column; 
+
+        /* Animated Stars Background */
+        .stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
         }
-        main { 
-            flex: 1 0 auto; 
-            padding-bottom: 100px; 
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle 3s infinite;
         }
-        article { 
-            font-family: 'Georgia', serif; 
-            line-height: 1.8; 
-            max-width: 800px; 
-            margin: auto; 
+
+        .star:nth-child(odd) {
+            animation-delay: 1s;
         }
-        header { 
-            background-color: #5C2F2F; 
-            color: white; 
-            position: sticky; 
-            top: 0; 
-            z-index: 10; 
+
+        .star:nth-child(3n) {
+            animation-delay: 2s;
         }
-        footer { 
-            background-color: #4A2C2A; 
-            color: white; 
-            flex-shrink: 0; 
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1); }
         }
-        a { 
-            color: #5C2F2F; 
-            transition: color 0.3s; 
+
+        .shooting-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px white, 0 0 20px white;
+            animation: shoot 4s linear infinite;
+            opacity: 0;
         }
-        a:hover { 
-            color: #D4A017; 
+
+        @keyframes shoot {
+            0% { opacity: 0; transform: translateX(-100px) translateY(100px); }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { opacity: 0; transform: translateX(300px) translateY(-300px); }
         }
-        select { 
-            background: #5C2F2F; 
-            color: white; 
-            padding: 0.5rem; 
-            border-radius: 0.25rem; 
+
+        /* Glassmorphism Effects */
+        .glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border-radius: 24px;
+        }
+
+        .glass-dark {
+            background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(0,5,15,0.8) 30%, rgba(0,10,30,0.8) 70%, rgba(0,15,45,0.8) 100%);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            color: #f8fafc;
+        }
+
+        /* Header Styling */
+        header {
+            position: relative;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .header-title {
+            font-family: 'Playfair Display', serif;
+            color: #f1f5f9;
+            font-weight: 700;
+            text-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+        }
+
+        /* Navigation */
+        nav a {
+            position: relative;
+            transition: all 0.3s ease;
+            color: #e2e8f0;
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: #f8fafc;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            transition: width 0.3s ease;
+            box-shadow: 0 0 8px rgba(139, 92, 246, 0.5);
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Select Styling */
+        .lang-select {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 8px 16px;
+            color: #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .lang-select:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Main Content */
+        main {
+            position: relative;
+            z-index: 10;
+            min-height: calc(100vh - 200px);
+        }
+
+        /* Contact Links */
+        .contact-link {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .contact-link:hover {
+            transform: translateX(4px);
+            filter: drop-shadow(0 2px 4px rgba(79, 172, 254, 0.3));
+        }
+
+        /* Contact Card Animation */
+        .contact-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .contact-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Footer */
+        footer {
+            position: relative;
+            z-index: 10;
+            margin-top: 4rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .contact-card:hover {
+                transform: translateY(-4px) scale(1.005);
+            }
         }
     </style>
 </head>
 <body>
-    <header class="shadow-md">
-        <div class="container mx-auto px-4 py-6">
-            <h1 class="text-4xl font-bold font-['Raleway', sans-serif]" data-lang-mg="Rediredin'i Nantenaina" data-lang-fr="Divagations de Nantenaina" data-lang-en="Nantenaina's wanderings">Rediredin'i Nantenaina</h1>
-            <p class="text-lg" data-lang-mg="Eritreritra na fihetseham-po sendra nandalo, dia nantsoina mba hitafa, dia noraketina an-tsoratra." data-lang-fr="Pensées ou émotions passantes, appelées à dialoguer, puis écrites." data-lang-en="Passing thoughts or emotions, called to converse, then written down.">Eritreritra sendra nandalo, dia nantsoina mba hitafa, dia noraketina an-tsoratra.</p>
-            <nav class="mt-4 flex justify-between">
-                <ul class="flex space-x-4">
-                    <li><a href="index.html" class="hover:underline" data-lang-mg="Fandraisana" data-lang-fr="Accueil" data-lang-en="Home">Fandraisana</a></li>
-                    <li><a href="about.html" class="hover:underline" data-lang-mg="Momba Ahy" data-lang-fr="À propos" data-lang-en="About">Momba Ahy</a></li>
-                    <li><a href="contact.html" class="hover:underline" data-lang-mg="Hifandray" data-lang-fr="Contact" data-lang-en="Contact">Hifandray</a></li>
+    <!-- Animated Stars Background -->
+    <div class="stars-container" id="stars-container"></div>
+
+    <header class="glass-dark">
+        <div class="container mx-auto px-6 py-8">
+            <h1 class="header-title text-5xl font-bold mb-4" data-lang-mg="Rediredin'i Nantenaina" data-lang-fr="Divagations de Nantenaina" data-lang-en="Nantenaina's Wanderings">Rediredin'i Nantenaina</h1>
+            <p class="text-slate-200 text-lg font-light mb-6" data-lang-mg="Eritreritra na fihetseham-po sendra nandalo, dia nantsoina mba hitafa, dia noraketina an-tsoratra." data-lang-fr="Pensées ou émotions passantes, appelées à dialoguer, puis écrites." data-lang-en="Passing thoughts or emotions, called to converse, then written down.">Eritreritra na fihetseham-po sendra nandalo, dia nantsoina mba hitafa, dia noraketina an-tsoratra.</p>
+            <nav class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <ul class="flex flex-wrap justify-center gap-8">
+                    <li><a href="index.html" class="hover:text-blue-300 transition-colors" data-lang-mg="Fandraisana" data-lang-fr="Accueil" data-lang-en="Home">Fandraisana</a></li>
+                    <li><a href="about.html" class="hover:text-blue-300 transition-colors" data-lang-mg="Momba Ahy" data-lang-fr="À propos" data-lang-en="About">Momba Ahy</a></li>
+                    <li><a href="contact.html" class="hover:text-blue-300 transition-colors" data-lang-mg="Hifandray" data-lang-fr="Contact" data-lang-en="Contact">Hifandray</a></li>
                 </ul>
-                <select id="lang-switcher" onchange="switchLanguage()">
-                    <option value="mg">Malagasy</option>
-                    <option value="fr">Français</option>
-                    <option value="en">English</option>
+                <select id="lang-switcher" class="lang-select" onchange="switchLanguage()">
+                    <option value="mg">🇲🇬 Malagasy</option>
+                    <option value="fr">🇫🇷 Français</option>
+                    <option value="en">🇺🇸 English</option>
                 </select>
             </nav>
         </div>
     </header>
-    <main class="container mx-auto px-4 py-8">
-        <article>
-            <h2 class="text-2xl font-semibold mb-4" data-lang-mg="Hifandray" data-lang-fr="Contact" data-lang-en="Contact">Hifandray</h2>
-            <p data-lang-mg="Mifandraisa amiko raha te hiresaka na hiara hiasa:" data-lang-fr="Contactez-moi pour discuter ou collaborer :" data-lang-en="Reach out to discuss or collaborate:">Mifandraisa amiko raha te hiresaka na hiara hiasa:</p>
-            <ul class="mt-2">
-                <li>Email: <a href="mailto:elnantenaina99@gmail.com" class="hover:underline">elnantenaina99@gmail.com</a></li>
-            </ul>
-        </article>
+
+    <main class="container mx-auto px-6 py-12">
+        <div class="max-w-4xl mx-auto">
+            <div class="glass contact-card p-12 shadow-2xl">
+                <h2 class="text-3xl font-bold mb-6" data-lang-mg="Hifandray" data-lang-fr="Contact" data-lang-en="Contact">Hifandray</h2>
+                
+                <p class="text-lg text-gray-700 mb-6" data-lang-mg="Mifandraisa amiko raha te hiresaka na hiara hiasa:" data-lang-fr="Contactez-moi pour discuter ou collaborer :" data-lang-en="Reach out to discuss or collaborate:">Mifandraisa amiko raha te hiresaka na hiara hiasa:</p>
+                
+                <ul class="mt-2 space-y-3">
+                    <li>Email: <a href="mailto:elnantenaina99@gmail.com" class="contact-link">elnantenaina99@gmail.com</a></li>
+                    <li>WhatsApp: <a href="https://wa.me/261333884768" class="contact-link">+261 33 38 847 68</a></li>
+                    <li>LinkedIn: <a href="https://linkedin.com/in/nantenaina-ratsimbazafy-59a9352a7" class="contact-link">linkedin.com/in/nantenaina-ratsimbazafy-59a9352a7</a></li>
+                </ul>
+            </div>
+        </div>
     </main>
-    <footer class="py-6">
-        <div class="container mx-auto px-4">
-            <p data-lang-mg="© 2025 Nantenaina Ratsimbazafy. Zo rehetra voatokana." data-lang-fr="© 2025 Nantenaina Ratsimbazafy. Tous droits réservés." data-lang-en="© 2025 Nantenaina Ratsimbazafy. All rights reserved.">© 2025 Nantenaina Ratsimbazafy. Zo rehetra voatokana.</p>
+
+    <footer class="glass-dark mt-16">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <p class="text-gray-200 mb-4" data-lang-mg="© 2025 Nantenaina Ratsimbazafy. Zo rehetra voatokana." data-lang-fr="© 2025 Nantenaina Ratsimbazafy. Tous droits réservés." data-lang-en="© 2025 Nantenaina Ratsimbazafy. All rights reserved.">© 2025 Nantenaina Ratsimbazafy. Zo rehetra voatokana.</p>
         </div>
     </footer>
+
     <script>
+        // Create animated stars
+        function createStars() {
+            const container = document.getElementById('stars-container');
+            const numberOfStars = 100;
+            
+            for (let i = 0; i < numberOfStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = star.style.height = Math.random() * 3 + 1 + 'px';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                container.appendChild(star);
+            }
+
+            for (let i = 0; i < 5; i++) {
+                const shootingStar = document.createElement('div');
+                shootingStar.className = 'shooting-star';
+                shootingStar.style.left = Math.random() * 100 + '%';
+                shootingStar.style.top = Math.random() * 50 + '%';
+                shootingStar.style.animationDelay = Math.random() * 10 + 's';
+                shootingStar.style.animationDuration = (Math.random() * 2 + 3) + 's';
+                container.appendChild(shootingStar);
+            }
+        }
+
         function switchLanguage() {
-            const lang = document.getElementById('lang-switcher').value;
-            localStorage.setItem('selectedLanguage', lang);
-            document.querySelectorAll('[data-lang-mg]').forEach(el => {
-                el.textContent = el.getAttribute(`data-lang-${lang}`);
-            });
+            try {
+                const lang = document.getElementById('lang-switcher').value;
+                try {
+                    localStorage.setItem('selectedLanguage', lang);
+                } catch(e) {
+                    console.warn('localStorage not available');
+                }
+                document.querySelectorAll('[data-lang-mg]').forEach(el => {
+                    el.textContent = el.getAttribute(`data-lang-${lang}`);
+                });
+            } catch (error) {
+                console.error('Error switching language:', error);
+                alert('Failed to switch language. Check console for details.');
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const savedLang = localStorage.getItem('selectedLanguage') || 'mg';
-            document.getElementById('lang-switcher').value = savedLang;
-            document.querySelectorAll('[data-lang-mg]').forEach(el => {
-                el.textContent = el.getAttribute(`data-lang-${savedLang}`);
-            });
+            try {
+                createStars();
+                
+                const savedLang = (typeof Storage !== "undefined" && localStorage.getItem('selectedLanguage')) || 'mg';
+                document.getElementById('lang-switcher').value = savedLang;
+                document.querySelectorAll('[data-lang-mg]').forEach(el => {
+                    el.textContent = el.getAttribute(`data-lang-${savedLang}`);
+                });
+            } catch (error) {
+                console.error('Error initializing page:', error);
+                alert('Failed to initialize page. Check console for details.');
+            }
         });
     </script>
 </body>
